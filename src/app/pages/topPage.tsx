@@ -6,6 +6,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 
 import { QuestSelector } from '../components/QuestSelector'
 import { QuestViewer } from '../components/QuestViewer'
+import { QuestMemo } from '../components/QuestMemo'
 
 import { questList, questData } from '../../fgo/questInfo'
 
@@ -22,6 +23,16 @@ const validatedQuestId = (questId) => {
   return questId
 }
 
+const saveMemo = (questId: number, text: string) =>
+{
+  localStorage.setItem(`memo/${questId}`, text)
+}
+
+const loadMemo = (questId: number) =>
+{
+  return localStorage.getItem(`memo/${questId}`) || ""
+}
+
 export const TopPage: FC = () => {
   const classes = useStyles();
   const [questId, setQuestId] = useState(validatedQuestId(parseInt(localStorage.getItem('questId'))))
@@ -32,6 +43,10 @@ export const TopPage: FC = () => {
   const handleQuestIdChanged = (id: number) => {
     setQuestId(id)
     localStorage.setItem('questId', Number(id).toString())
+  }
+
+  const handleMemoChanged = (text: string) => {
+    saveMemo(questId, text)
   }
 
   return (
@@ -48,14 +63,11 @@ export const TopPage: FC = () => {
           </Toolbar>
         </AppBar>
       </div>
-      <Grid container direction="column" spacing={2}>
-        <Grid item>
-          <QuestSelector quests={questList()} questData={questData} questId={questId} onChange={handleQuestIdChanged}/>
-        </Grid>
-        <Grid item>
-          <QuestViewer questData={questData} questId={questId}/>
-        </Grid>
-      </Grid>
+      <div>
+        <QuestSelector quests={questList()} questData={questData} questId={questId} onChange={handleQuestIdChanged}/>
+        <QuestViewer questData={questData} questId={questId}/>
+        <QuestMemo key={questId} questId={questId} maxLength={10 * 1024} onChange={handleMemoChanged} text={loadMemo(questId)}/>
+      </div>
     </>
   )
 }
