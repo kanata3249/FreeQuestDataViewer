@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 
-import { AppBar, Toolbar, IconButton, Typography, Grid } from '@material-ui/core'
+import { AppBar, Toolbar, IconButton, Typography, Link } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 
 import { QuestSelector } from '../components/QuestSelector'
@@ -12,7 +12,10 @@ import { questList, questData } from '../../fgo/questInfo'
 
 const useStyles = makeStyles((theme: Theme) => 
   createStyles({
-    toolbar: theme.mixins.toolbar
+    toolbar: theme.mixins.toolbar,
+    notice: {
+      marginLeft: 10,
+    }
   }))
 
 const validatedQuestId = (questId) => {
@@ -67,6 +70,9 @@ export const TopPage: FC = () => {
         <QuestSelector quests={questList()} questData={questData} questId={questId} onChange={handleQuestIdChanged}/>
         <QuestViewer questData={questData} questId={questId}/>
         <QuestMemo key={questId} questId={questId} maxLength={10 * 1024} onChange={handleMemoChanged} text={loadMemo(questId)}/>
+      </div>
+      <div className={classes.notice}>
+        クエスト・エネミーデータなど大部分は<Link href="https://w.atwiki.jp/f_go/" target="blank">Fate/Grand Order @wiki 【FGO】</Link>を参考にさせていただいています。
       </div>
     </>
   )
