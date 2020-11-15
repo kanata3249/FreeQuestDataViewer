@@ -76,7 +76,8 @@ const useStyles = makeStyles((theme: Theme) => (
       border: 0
     },
     container: {
-      maxWidth: 1024,
+      boxSizing: "border-box",
+      width: "100%",
       padding: 6
     },
     waveTitle: {
@@ -146,8 +147,8 @@ export const QuestViewer: FC<Props> = (props) => {
   const cellClassNames = [[ classes.body, classes.body2nd ], [classes.bodyOdd, classes.body2ndOdd ]]
 
   return (
-    <>
-      <TableContainer className={classes.container}>
+    <div className={classes.container}>
+      <TableContainer>
         <Table>
           <TableHead>
             <TableRow key="label">
@@ -168,7 +169,7 @@ export const QuestViewer: FC<Props> = (props) => {
         </Table>
       </TableContainer>
       <p></p>
-      <TableContainer className={classes.container}>
+      <TableContainer>
         {!isSP &&
           <Table>
             <TableHead>
@@ -203,6 +204,6 @@ export const QuestViewer: FC<Props> = (props) => {
           </div>
         ))}
       </TableContainer>
-    </>
+    </div>
   )
 }

@@ -13,10 +13,8 @@ type Props = {
 const useStyles = makeStyles((theme: Theme) => (
   createStyles({
     container: {
-      minWidth: "95vw",
+      width: "100%",
       padding: 6,
-      paddingRight: 10,
-      paddingLeft: 10
     },
   }))
 )

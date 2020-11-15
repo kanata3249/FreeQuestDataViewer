@@ -26,6 +26,10 @@ type Props = {
 const useStyles = makeStyles((theme: Theme) => 
   createStyles({
     toolbar: theme.mixins.toolbar,
+    container: {
+      boxSizing: "border-box",
+      width: "100%"
+    },
     formControl: {
       margin: theme.spacing(1),
       minWidth: 280,
@@ -59,7 +63,7 @@ export const QuestSelector: FC<Props> = (props) => {
   }
 
   return (
-    <div>
+    <div className={classes.container}>
       <FormControl className={isSP ? classes.formControlSP : classes.formControl}>
         <InputLabel>Chapter</InputLabel>
         <Select value={chapterId} onChange={handleChapterChange}>

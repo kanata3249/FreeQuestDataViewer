@@ -13,6 +13,9 @@ import { questList, questData } from '../../fgo/questInfo'
 const useStyles = makeStyles((theme: Theme) => 
   createStyles({
     toolbar: theme.mixins.toolbar,
+    contents: {
+      maxWidth: 1000
+    },
     notice: {
       marginLeft: 10,
     }
@@ -66,7 +69,7 @@ export const TopPage: FC = () => {
           </Toolbar>
         </AppBar>
       </div>
-      <div>
+      <div className={classes.contents}>
         <QuestSelector quests={questList()} questData={questData} questId={questId} onChange={handleQuestIdChanged}/>
         <QuestViewer questData={questData} questId={questId}/>
         <QuestMemo key={questId} questId={questId} maxLength={10 * 1024} onChange={handleMemoChanged} text={loadMemo(questId)}/>
