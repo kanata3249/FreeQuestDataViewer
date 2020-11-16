@@ -1,3 +1,18 @@
+type QuestListByChapter = {
+  id: number
+  name: string
+  quests: [
+    {
+      id: number
+      name: string
+    }
+  ]
+}
+
+type QuestList = {
+  [key: number]: QuestListByChapter
+}
+
 type QuestData = {
   chapterId: number
   name: string
@@ -30,7 +45,7 @@ type QuestDataMap = {
 }
 
 const fgo_data = require('./quest.json')
-const fgo_quest_list = fgo_data.quests.reduce((acc, item) => {
+const fgo_quest_list: QuestList = fgo_data.quests.reduce((acc, item) => {
   const { id, ...chapter } = item
   acc[id] = chapter
   return acc
