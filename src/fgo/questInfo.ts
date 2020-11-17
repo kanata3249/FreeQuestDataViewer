@@ -15,6 +15,8 @@ type QuestList = {
 
 type QuestData = {
   chapterId: number
+  chapter: string
+  area: string
   name: string
   lv: number
   ap: number

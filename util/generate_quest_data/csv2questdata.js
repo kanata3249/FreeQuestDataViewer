@@ -16,7 +16,7 @@ csv = require('csvtojson')
 const csvs = process.argv.slice(2)
 
 const csv2json = async (file) => {
-  return await csv().fromFile(file)
+  return await csv({checkType:true}).fromFile(file)
 }
 
 Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2]), csv2json(csvs[3]), csv2json(csvs[4])])
@@ -42,7 +42,13 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2]), csv2json(c
   }, {})
   const questData = quest_array.reduce((acc, item) => {
     const {id, chapter_id, area_id, quest_id, ...quest_info} = item
-    acc[id] = { chapterId: chapter_id, ...quest_info, enemies: [] }
+    const area = area_array.find((area_item) => {
+      return ((area_item.area_id == area_id) && (area_item.chapter_id == chapter_id))
+     })
+     const chapter = chapter_array.find((chapter_item) => {
+       return (chapter_item.id == chapter_id)
+     })
+     acc[id] = { chapterId: chapter_id, chapter: chapter.name, area: area.name, ...quest_info, enemies: [] }
     return acc
   }, {})
   quest_enemy_array.forEach((item) => {
