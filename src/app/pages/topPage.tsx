@@ -7,6 +7,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { QuestSelector } from '../components/QuestSelector'
 import { QuestViewer } from '../components/QuestViewer'
 import { QuestMemo } from '../components/QuestMemo'
+import { FarmingCounter } from '../components/FarmingCounter'
 
 import { questList, questData } from '../../fgo/questInfo'
 
@@ -67,11 +68,24 @@ const importMemo = (json: string) =>
   } catch(error) {
   }
 }
+
+const saveCounter = (text: string) =>
+{
+  localStorage.setItem(`counter/0`, text)
+}
+
+const loadCounter = () =>
+{
+  return localStorage.getItem(`counter/0`)
+}
+
 export const TopPage: FC = () => {
   const classes = useStyles()
   const [ questId, setQuestId ] = useState(validatedQuestId(parseInt(localStorage.getItem('questId'))))
   const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null)
   const [ updateCount, setUpdateCount ] = useState(0)
+  const [ showCounter, setShowCounter ] = useState(false)
+  const [ counterData, setCounterData ] = useState(loadCounter())
 
   const updateMemo = () => {
     setUpdateCount(updateCount + 1)
@@ -84,6 +98,16 @@ export const TopPage: FC = () => {
 
   const handleMemoChanged = (text: string) => {
     saveMemo(questId, text)
+  }
+
+  const handleCounterChanged = (text : string) => {
+    setCounterData(text)
+    saveCounter(text)
+  }
+
+  const handleShowHideCounter = () => {
+    setShowCounter(!showCounter)
+    closeMenu()
   }
 
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -125,6 +149,12 @@ export const TopPage: FC = () => {
     closeMenu()
   }
 
+  const questDataForCounter = () => {
+    const quest = questData(questId)
+
+    return { title: `${quest.area} ${quest.name}`, bond: quest.bond }
+  }
+
   const closeMenu = () => {
     setAnchorEl(null)
   }
@@ -138,6 +168,7 @@ export const TopPage: FC = () => {
               <MenuIcon />
             </IconButton>
             <Menu id="main-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+              <MenuItem onClick={handleShowHideCounter}>{!showCounter ? "周回カウンタ表示" : "周回カウンタ非表示"} </MenuItem>
               <MenuItem onClick={handleExportMemo}>メモ書き出し</MenuItem>
               <MenuItem onClick={handleImportMemo}>メモ読み込み</MenuItem>
             </Menu>
@@ -148,6 +179,7 @@ export const TopPage: FC = () => {
         </AppBar>
       </div>
       <div className={classes.contents}>
+        {showCounter && <FarmingCounter onChange={handleCounterChanged} counterData={counterData} questData={questDataForCounter} />}
         <QuestSelector quests={questList()} questData={questData} questId={questId} onChange={handleQuestIdChanged}/>
         <QuestViewer questData={questData} questId={questId}/>
         <QuestMemo key={`${questId}-${updateCount}`} questId={questId} maxLength={10 * 1024} onChange={handleMemoChanged} text={loadMemo(questId)}/>
