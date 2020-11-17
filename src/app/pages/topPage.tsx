@@ -1,5 +1,7 @@
 import React, { FC, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import { useTheme } from '@material-ui/core/styles'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 import { AppBar, Menu, MenuItem, Toolbar, IconButton, Typography, Link } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -87,6 +89,11 @@ export const TopPage: FC = () => {
   const [ showCounter, setShowCounter ] = useState(false)
   const [ counterData, setCounterData ] = useState(loadCounter())
 
+  const theme = useTheme();
+  const isPC = () => {
+    return useMediaQuery(theme.breakpoints.up('xl'));
+  }
+
   const updateMemo = () => {
     setUpdateCount(updateCount + 1)
   }
@@ -168,7 +175,7 @@ export const TopPage: FC = () => {
               <MenuIcon />
             </IconButton>
             <Menu id="main-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
-              <MenuItem onClick={handleShowHideCounter}>{!showCounter ? "周回カウンタ表示" : "周回カウンタ非表示"} </MenuItem>
+              {isPC() && <MenuItem onClick={handleShowHideCounter}>{!showCounter ? "周回カウンタ表示" : "周回カウンタ非表示"} </MenuItem>}
               <MenuItem onClick={handleExportMemo}>メモ書き出し</MenuItem>
               <MenuItem onClick={handleImportMemo}>メモ読み込み</MenuItem>
             </Menu>
