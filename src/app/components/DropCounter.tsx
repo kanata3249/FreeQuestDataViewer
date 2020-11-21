@@ -51,10 +51,8 @@ export const DropCounter: FC<Props> = (props) => {
   }
   const handleCurrentChanged = (e : React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Number.parseInt(e.target.value) || 0
-    if (newValue >= start) {
-      setCurrent(newValue)
-      props.onChange(props.onChangeArg, { start, current: newValue })
-    }
+    setCurrent(newValue)
+    props.onChange(props.onChangeArg, { start, current: newValue })
   }
   const formatRate = (value: number) => (`${Math.floor(value)}.${(Math.floor(value * 100) % 100).toString().padStart(2,"0")}%`)
   const dropRate = (value: number, divider: number) => {
@@ -69,13 +67,18 @@ export const DropCounter: FC<Props> = (props) => {
     <Grid container direction="column" className={classes.container}>
       {props.label ? <Grid item style={{textAlign: "center"}}>{props.label}</Grid> : <></>}
       <Grid item>
-        <TextField label={props.noTextLabel ? " " : "開始値"} onChange={handleStartChanged} value={start} inputProps={{ maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}} type="number" size="small" />
+        <TextField label={props.noTextLabel ? " " : "開始値"} onChange={handleStartChanged} value={start}
+         inputProps={{ maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}} type="number" size="small"
+         onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
       </Grid>
       <Grid item>
-        <TextField label={props.noTextLabel ? " " : "現在値"} onChange={handleCurrentChanged} value={current} inputProps={{ maxLength: 4, style: { textAlign: "right", paddingRight: 5 }}} type="number" size="small" />
+        <TextField label={props.noTextLabel ? " " : "現在値"} onChange={handleCurrentChanged} value={current}
+         inputProps={{ maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}} type="number" size="small"
+         onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
       </Grid>
       <Grid item>
-        <TextField label={props.noTextLabel ? " " : "レート"} onChange={handleCurrentChanged} value={dropRate(current - start, props.divider)} inputProps={{tabIndex: -1, maxLength: 4, style: { textAlign: "right", paddingRight: 5 }}} size="small" />
+        <TextField label={props.noTextLabel ? " " : "レート"} value={dropRate(current - start, props.divider)}
+         inputProps={{tabIndex: -1, maxLength: 4, style: { textAlign: "right", paddingRight: 5 }}} size="small" />
       </Grid>
     </Grid>
   )
