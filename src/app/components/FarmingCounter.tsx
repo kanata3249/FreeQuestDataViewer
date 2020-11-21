@@ -237,7 +237,8 @@ export const FarmingCounter: FC<Props> = (props) => {
           </Grid>
           <Grid item>
             <TextField label="トータル" onChange={handleCountChanged} type="number" value={counterData.count}
-              className={classes.total} inputProps={{min: 0, style: { textAlign: "right" } }}/>
+              className={classes.total} inputProps={{min: 0, style: { textAlign: "right" } }}
+              onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
           <Grid item>
             <Button onClick={applyQuestData} variant="outlined" >クエスト反映</Button>
@@ -258,15 +259,18 @@ export const FarmingCounter: FC<Props> = (props) => {
           </Grid>
           <Grid item>
             <TextField label="絆 開始値" onChange={handleBondStartChanged} value={counterData.bond.start}
-              size="small" type="number" inputProps={{className: classes.textField}} />
+              size="small" type="number" inputProps={{className: classes.textField}}
+              onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
           <Grid item>
             <TextField label="絆 現在値" onChange={handleBondCurrentChanged} value={counterData.bond.current}
-              size="small" type="number" inputProps={{className: classes.textField}} />
+              size="small" type="number" inputProps={{className: classes.textField}}
+              onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
             </Grid>
           <Grid item>
             <TextField label="換算周回数" onChange={handleBondCountChanged} value={calculateCountByBond(counterData)}
-              error={!isBondCountValid()} size="small" type="number" inputProps={{min: 0, className: classes.textField}} />
+              error={!isBondCountValid()} size="small" type="number" inputProps={{min: 0, className: classes.textField}}
+              onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
           <Grid item>
             <Button onClick={applyCountByBond} disabled={!isApplyOK()} variant="outlined" >トータル周<br/>回数へ反映</Button>
