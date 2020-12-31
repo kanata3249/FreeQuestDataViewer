@@ -227,6 +227,10 @@ export const FarmingCounter: FC<Props> = (props) => {
     updateBondPerQuest()
     props.onChange(JSON.stringify(newCounterData))
   }
+  const resetCounter = () => {
+    updateBondPerQuest()
+    props.onChange(JSON.stringify(emptyCountData))
+  }
   return (
     <Grid container direction="column" className={classes.container} spacing={2}>
       <Grid item>
@@ -242,6 +246,9 @@ export const FarmingCounter: FC<Props> = (props) => {
           </Grid>
           <Grid item>
             <Button onClick={applyQuestData} variant="outlined" >クエスト反映</Button>
+          </Grid>
+          <Grid item>
+            <Button onClick={resetCounter} variant="outlined" >リセット</Button>
           </Grid>
         </Grid>
       </Grid>
