@@ -161,9 +161,13 @@ export const FarmingCounter: FC<Props> = (props) => {
   const isSP = useMediaQuery(theme.breakpoints.down('xs'))
   const counterData = parseCounterData(props.counterData)
   const [ bondPerQuestKey, setBondPerQuestKey ] = useState(0)
+  const [ dropCounterKey, setDropCounterKey ] = useState(0)
 
   const updateBondPerQuest = () => {
     setBondPerQuestKey(bondPerQuestKey + 1)
+  }
+  const updateDropCounter = () => {
+    setDropCounterKey(dropCounterKey + 1)
   }
   const handleTitleChanged = (e : React.ChangeEvent<HTMLInputElement>) => {
     const newCounterData = { ...counterData, title: e.target.value }
@@ -229,6 +233,7 @@ export const FarmingCounter: FC<Props> = (props) => {
   }
   const resetCounter = () => {
     updateBondPerQuest()
+    updateDropCounter()
     props.onChange(JSON.stringify(emptyCountData))
   }
   return (
@@ -290,7 +295,7 @@ export const FarmingCounter: FC<Props> = (props) => {
           {counterData.dropCounts.map((dropCount: DropCount, idx: number) => (
             <Grid item key={`${idx}-${counterData.count}`}>
               <DropCounter onChange={handleDropCountChanged} onChangeArg={idx} noTextLabel={idx != 0}
-                dropCount={dropCount} divider={counterData.count + calculateCountByBond(counterData)} key={`${idx}-${counterData.count}`}/>
+                dropCount={dropCount} divider={counterData.count + calculateCountByBond(counterData)} key={`${dropCounterKey}-${idx}-${counterData.count}`}/>
             </Grid>
           ))}
         </Grid>
