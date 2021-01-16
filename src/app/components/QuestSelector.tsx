@@ -45,20 +45,17 @@ export const QuestSelector: FC<Props> = (props) => {
   const theme = useTheme();
   const isSP = useMediaQuery(theme.breakpoints.down('xs'));
 
-  const [ chapterId, setChapterId ] = useState(props.questData(props.questId).chapterId)
-  const [ questId, setQuestId ] = useState(props.questId)
+  const questId = props.questId
+  const chapterId = props.questData(questId).chapterId
 
   const handleChapterChange = (e : React.ChangeEvent<HTMLInputElement>) => {
     const chapterId = parseInt(e.target.value)
-    setChapterId(chapterId)
-    if (props.questData(props.questId).chapterId != chapterId) {
+    if (props.questData(questId).chapterId != chapterId) {
       const newQuestId = props.quests[chapterId].quests[0].id
-      setQuestId(newQuestId)
       props.onChange(newQuestId)
     }
   }
   const handleQuestChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-    setQuestId(parseInt(e.target.value))
     props.onChange(parseInt(e.target.value))
   }
 
