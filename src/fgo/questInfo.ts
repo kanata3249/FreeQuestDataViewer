@@ -42,8 +42,23 @@ type QuestData = {
   ]
 }
 
+export type DropItem = {
+  id: number,
+  group: string,
+  name: string
+}
+
 type QuestDataMap = {
   [key: number]: QuestData
+}
+
+export type QuestDropRates = {
+  id: number
+  chapter: string
+  name: string
+  dropRates: {
+    [id: number]: number
+  }
 }
 
 const fgo_data = require('./quest.json')
@@ -67,4 +82,37 @@ export const questList = () => {
 
 export const questData = (id: number) => {
   return fgo_quest_data[id]
+}
+
+const questDropList: { [id: string]: { [itemId: string]: string } } = require('./dropdata.json')
+const itemNames: { [id: string]: string } = require('./itemnames.json')
+
+export const dropItems = (): DropItem[] => {
+  const group = [ "", "", "スキル石", "銅素材", "銀素材", "金素材", "モニュメント・ピース", "", "伝承結晶" ]
+  return Object.entries(itemNames).reduce((acc, [idString, name]) => {
+    const id = Number(idString)
+    if (id >= 300 && id < 600) {
+      acc.push({ name, group: group[(id / 100) >> 0], id })
+    }
+    return acc
+  }, [])
+}
+
+export const questListByDropItem = (itemId: number) : QuestDropRates[] =>
+{
+  return Object.entries(questDropList).reduce((acc, [questId, dropRates]) => {
+    if (dropRates[itemId]) {
+      const quest = questData(Number(questId))
+      acc.push({
+        id: Number(questId),
+        chapter: quest.chapter,
+        name: `${quest.area} ${quest.name}`,
+        dropRates: Object.entries(dropRates).reduce((acc, [id, rate]) => {
+          acc[Number(id)] = Number(rate)
+          return acc
+        },{})
+      })
+    }
+    return acc
+  }, [])
 }
