@@ -9,8 +9,7 @@
 // quest_enemy: id	quest_id	wave	pos	enemy_id	name	class	lv	hp	buff
 //
 
-const { ContactSupportOutlined } = require('@material-ui/icons')
-
+fs = require('fs')
 csv = require('csvtojson')
 
 const csvs = process.argv.slice(2)
@@ -63,5 +62,10 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2]), csv2json(c
     enemyData: enemyData,
     questData: questData
   }
-  console.log(JSON.stringify(result))
+
+  try {
+    fs.writeFileSync("quest.json", JSON.stringify(result) + "\n")
+  } catch (e) {
+    console.log(e)
+  }
 })
