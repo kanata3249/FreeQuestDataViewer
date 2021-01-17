@@ -3,7 +3,7 @@ import { makeStyles, createStyles, Theme, useTheme } from '@material-ui/core/sty
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 import { Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
-import { List, ListItem, ListItemText, Checkbox, FormControlLabel, Select, MenuItem } from '@material-ui/core'
+import { List, ListItem, ListItemText, Checkbox, FormControlLabel, Select, MenuItem, ListSubheader } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import { Grid } from '@material-ui/core'
 
@@ -130,11 +130,27 @@ export const DropSearchDialog: FC<Prop> = (props) => {
           <Select
             value={dropItem.id}
             onChange={handleSearchItemChanged}
+            native
             style={{width: "100%"}}
             >
-              {dropItemList.map((item, index) => (
-                <MenuItem key={item.id} value={item.id} >{item.name}</MenuItem>
-              ))}
+              {dropItemList.reduce((acc, item) => {
+                if (!acc.includes(item.group)) {
+                  acc.push(item.group)
+                }
+                return acc
+              },[]).reduce((acc, group) => {
+                acc.push(
+                  <optgroup label={group} >
+                    {dropItemList.filter((a) => (
+                        a.group == group
+                      )).map((item) => (
+                        <option key={item.id} value={item.id} >{item.name}</option>
+                      ))
+                    }
+                  </optgroup>
+                )
+                return acc
+              }, [])}
           </Select>
         </DialogActions>
         <DialogActions className={classes.action2} >
