@@ -10,6 +10,7 @@ import { QuestSelector } from '../components/QuestSelector'
 import { QuestViewer } from '../components/QuestViewer'
 import { QuestMemo } from '../components/QuestMemo'
 import { FarmingCounter } from '../components/FarmingCounter'
+import { DropSearchDialog } from '../components/DropSearchDialog'
 
 import { questList, questData } from '../../fgo/questInfo'
 
@@ -88,6 +89,7 @@ export const TopPage: FC = () => {
   const [ updateCount, setUpdateCount ] = useState(0)
   const [ showCounter, setShowCounter ] = useState(false)
   const [ counterData, setCounterData ] = useState(loadCounter())
+  const [ showDropSearchDialog, setShowDropSearchDialog ] = useState(false)
 
   const theme = useTheme();
   const isPC = () => {
@@ -166,6 +168,19 @@ export const TopPage: FC = () => {
     setAnchorEl(null)
   }
 
+  const handleShowDropSearchDialog = () => {
+    setShowDropSearchDialog(true)
+    closeMenu()
+  }
+
+  const handleDropSearchDialogResult = (selected: boolean, questId: number) => {
+    if (selected) {
+      setQuestId(questId)
+      localStorage.setItem('questId', questId.toString())
+    }
+    setShowDropSearchDialog(false)
+  }
+
   return (
     <>
       <div className={classes.toolbar}>
@@ -175,6 +190,7 @@ export const TopPage: FC = () => {
               <MenuIcon />
             </IconButton>
             <Menu id="main-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+              <MenuItem onClick={handleShowDropSearchDialog}>ドロップ検索</MenuItem>
               {isPC() && <MenuItem onClick={handleShowHideCounter}>{!showCounter ? "周回カウンタ表示" : "周回カウンタ非表示"} </MenuItem>}
               <MenuItem onClick={handleExportMemo}>メモ書き出し</MenuItem>
               <MenuItem onClick={handleImportMemo}>メモ読み込み</MenuItem>
@@ -191,8 +207,11 @@ export const TopPage: FC = () => {
         <QuestViewer questData={questData} questId={questId}/>
         <QuestMemo key={`${questId}-${updateCount}`} questId={questId} maxLength={10 * 1024} onChange={handleMemoChanged} text={loadMemo(questId)}/>
       </div>
+      <DropSearchDialog open={showDropSearchDialog} itemId={300} onClose={handleDropSearchDialogResult} />
       <div className={classes.notice}>
         クエスト・エネミーデータなど大部分は<Link href="https://w.atwiki.jp/f_go/" target="blank">Fate/Grand Order @wiki 【FGO】</Link>を参考にさせていただいています。
+        <br />
+        クエストドロップデータは<Link href="https://sites.google.com/view/fgo-domus-aurea" target="black">FGOアイテム効率劇場</Link>のデータを使用させていただいています。
       </div>
     </>
   )
