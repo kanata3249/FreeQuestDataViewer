@@ -2,11 +2,10 @@ import React, { FC, useState } from 'react'
 import { makeStyles, createStyles, Theme, useTheme } from '@material-ui/core/styles'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, IconButton } from '@material-ui/core'
-import { List, ListItem, ListItemText, Checkbox, FormControlLabel } from '@material-ui/core'
-import { Autocomplete } from '@material-ui/lab'
+import { Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
+import { List, ListItem, ListItemText, Checkbox, FormControlLabel, Select, MenuItem } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
-import { Paper, Grid } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 
 import { dropItems, questListByDropItem, QuestDropRates, DropItem } from '../../fgo/questInfo'
 
@@ -80,7 +79,9 @@ export const DropSearchDialog: FC<Prop> = (props) => {
     }
   })
 
-  const handleSearchItemChanged = (e: object, value: DropItem, reason: string) => {
+  const handleSearchItemChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = dropItemList.find((a) => a.id == Number(e.target.value))
+    
     value && setDropItem(value)
   }
 
@@ -126,16 +127,15 @@ export const DropSearchDialog: FC<Prop> = (props) => {
           </IconButton>
         </DialogTitle>
         <DialogActions>
-          <Autocomplete
-            size="small"
-            value={dropItem}
+          <Select
+            value={dropItem.id}
             onChange={handleSearchItemChanged}
-            options={dropItemList} getOptionLabel={(option) => option.name}
-            groupBy={(option) => option.group}
-            disableClearable
-            renderInput={(params) => <TextField {...params} label="ドロップ品" variant="outlined" />}
             style={{width: "100%"}}
-            />
+            >
+              {dropItemList.map((item, index) => (
+                <MenuItem key={item.id} value={item.id} >{item.name}</MenuItem>
+              ))}
+          </Select>
         </DialogActions>
         <DialogActions className={classes.action2} >
           <FormControlLabel control={<Checkbox size="small" color="default" checked={useTotalDropRate} onChange={(e) => setUseTotalDropRate(e.target.checked)} />} label="ドロップ率合算" />
