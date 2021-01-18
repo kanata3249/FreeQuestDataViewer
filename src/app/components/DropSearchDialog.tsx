@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme: Theme) =>
     subDrop: {
       margin: 0,
       color: theme.palette.text.secondary,
-      fontSize: "0.83em",
       textAlign: "right"
     }
   })
