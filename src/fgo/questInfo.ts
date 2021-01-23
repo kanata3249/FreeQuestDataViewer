@@ -109,7 +109,7 @@ export const questListByDropItem = (itemId: number) : QuestDropRates[] =>
   }, [])
 }
 
-const questDropItems = (questId: number): { id: number, name: string, rate: number }[] => {
+const questDropItems = (questId: number): { id: number, group: string, name: string, rate: number }[] => {
   const questDrop = questDropList[questId]
   const dropItemIds = Object.keys(questDrop).map((key) => Number(key))
   const itemGroup = (itemId: number) => ((itemId / 100) >> 0)
@@ -133,6 +133,6 @@ export const questList = () => {
   return fgo_quest_list
 }
 
-export const questData = (id: number) => {
+export const questData = (id: number): QuestData => {
   return { ...fgo_quest_data[id], drop: questDropItems(id) }
 }
