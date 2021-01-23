@@ -82,6 +82,7 @@ const useStyles = makeStyles((theme: Theme) => (
     },
     waveTitle: {
       backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
       marginBottom: 0
     }
   }))
