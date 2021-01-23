@@ -15,7 +15,7 @@ type Props = {
     bond: number
     exp: number
     qp: number
-    drop: string
+    drop: { id: number, group: string, name: string, rate: number }[]
     attributes: string
     enemies: [
       [
@@ -203,6 +203,36 @@ export const QuestViewer: FC<Props> = (props) => {
           </Table>
           </div>
         ))}
+        <Table>
+          <TableHead>
+            <TableRow><TableCell className={classes.head}>ドロップ率(参考)</TableCell></TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell className={classes.body}>
+                {questData.drop
+                  .filter((drop) => drop.group.match("素材"))
+                  .map((drop) => `${drop.name}: ${drop.rate}%`).join(" ")}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className={classes.body}>
+                {questData.drop
+                  .filter((drop) => drop.group == "スキル石")
+                  .map((drop) => `${drop.name}: ${drop.rate}%`).join(" ")}
+              </TableCell>
+            </TableRow>
+            {questData.drop.find((drop) => drop.group == "モニュメント・ピース") &&
+              <TableRow>
+                <TableCell className={classes.body}>
+                  {questData.drop
+                    .filter((drop) => drop.group == "モニュメント・ピース")
+                    .map((drop) => `${drop.name}: ${drop.rate}%`).join(" ")}
+                </TableCell>
+              </TableRow>
+            }
+          </TableBody>
+        </Table>
       </TableContainer>
     </div>
   )

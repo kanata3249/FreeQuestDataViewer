@@ -23,7 +23,7 @@ type QuestData = {
   bond: number
   exp: number
   qp: number
-  drop: string
+  drop: { id: number, group: string, name: string, rate: number }[]
   attributes: string
   enemies: [
     [
@@ -76,19 +76,11 @@ Object.values(fgo_quest_data).forEach((quest) => {
   })
 })
 
-export const questList = () => {
-  return fgo_quest_list
-}
-
-export const questData = (id: number) => {
-  return fgo_quest_data[id]
-}
-
 const questDropList: { [id: string]: { [itemId: string]: string } } = require('./dropdata.json')
 const itemNames: { [id: string]: string } = require('./itemnames.json')
+const group = [ "", "", "スキル石", "銅素材", "銀素材", "金素材", "モニュメント・ピース", "", "伝承結晶" ]
 
 export const dropItems = (): DropItem[] => {
-  const group = [ "", "", "スキル石", "銅素材", "銀素材", "金素材", "モニュメント・ピース", "", "伝承結晶" ]
   return Object.entries(itemNames).reduce((acc, [idString, name]) => {
     const id = Number(idString)
     if (id >= 300 && id < 600) {
@@ -115,4 +107,32 @@ export const questListByDropItem = (itemId: number) : QuestDropRates[] =>
     }
     return acc
   }, [])
+}
+
+const questDropItems = (questId: number): { id: number, name: string, rate: number }[] => {
+  const questDrop = questDropList[questId]
+  const dropItemIds = Object.keys(questDrop).map((key) => Number(key))
+  const itemGroup = (itemId: number) => ((itemId / 100) >> 0)
+  const itemSubGroup = (itemId: number) => (((itemId / 10) % 10) >> 0)
+
+  const sortedDropItemIds = [
+    ...dropItemIds.filter((itemId) => (itemGroup(itemId) == 5)).sort((a, b) => b - a),
+    ...dropItemIds.filter((itemId) => (itemGroup(itemId) == 4)).sort((a, b) => b - a),
+    ...dropItemIds.filter((itemId) => (itemGroup(itemId) == 3 && itemId != 308)).sort((a, b) => b - a),
+    ...dropItemIds.filter((itemId) => (itemId == 308)),
+    ...dropItemIds.filter((itemId) => (itemGroup(itemId) == 2)).sort((a, b) => (itemSubGroup(b) - itemSubGroup(a)) || (a - b)),
+    ...dropItemIds.filter((itemId) => (itemGroup(itemId) == 6)).sort((a, b) => (itemSubGroup(b) - itemSubGroup(a)) || (a - b)),
+  ]
+
+  return sortedDropItemIds.map((itemId) => (
+    { id: itemId, group: group[itemGroup(itemId)], name: itemNames[itemId], rate: Number(questDrop[itemId]) }
+  ))
+}
+
+export const questList = () => {
+  return fgo_quest_list
+}
+
+export const questData = (id: number) => {
+  return { ...fgo_quest_data[id], drop: questDropItems(id) }
 }
