@@ -139,7 +139,7 @@ export const DropSearchDialog: FC<Prop> = (props) => {
                 return acc
               },[]).reduce((acc, group) => {
                 acc.push(
-                  <optgroup label={group} >
+                  <optgroup label={group} key={group} >
                     {dropItemList.filter((a) => (
                         a.group == group
                       )).map((item) => (
