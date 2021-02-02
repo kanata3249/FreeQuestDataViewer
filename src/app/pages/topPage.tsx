@@ -3,7 +3,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 
-import { AppBar, Menu, MenuItem, Toolbar, IconButton, Typography, Link } from '@material-ui/core'
+import { AppBar, Menu, MenuItem, Toolbar, IconButton, Typography, Link, Divider } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 
 import { QuestSelector } from '../components/QuestSelector'
@@ -184,6 +184,11 @@ export const TopPage: FC = () => {
     setShowDropSearchDialog(false)
   }
 
+  const handleOpenSourceLicenses = () => {
+    window.open("./opensource-licenses.txt", "_blank")
+    closeMenu()
+  }
+
   return (
     <>
       <div className={classes.toolbar}>
@@ -195,8 +200,11 @@ export const TopPage: FC = () => {
             <Menu id="main-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
               <MenuItem onClick={handleShowDropSearchDialog}>ドロップ検索</MenuItem>
               {isPC() && <MenuItem onClick={handleShowHideCounter}>{!showCounter ? "周回カウンタ表示" : "周回カウンタ非表示"} </MenuItem>}
+              <Divider />
               <MenuItem onClick={handleExportMemo}>メモ書き出し</MenuItem>
               <MenuItem onClick={handleImportMemo}>メモ読み込み</MenuItem>
+              <Divider />
+              <MenuItem onClick={handleOpenSourceLicenses}>オープンソースライセンス</MenuItem>
             </Menu>
             <Typography variant="h6">
               Free Quest Data Viewer
