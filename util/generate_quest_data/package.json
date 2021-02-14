@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "gen-questdata": "node csv2questdata.js 1_chapter.csv 2_area.csv 3_enemy.csv 4_quest.csv 5_quest_enemy.csv",
+    "gen-dropdata": "node gendropdata.js 6_dropdata.json",
+    "get-dropdata": "curl -o 6_dropdata.json https://spreadsheets.google.com/feeds/list/1TrfSDteVZnjUPz68rKzuZWZdZZBLqw03FlvEToOvqH0/8/public/values?alt=json"
+  },
   "devDependencies": {
     "csvtojson": "^2.0.10"
   }
