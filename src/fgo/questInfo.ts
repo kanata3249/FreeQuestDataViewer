@@ -134,5 +134,8 @@ export const questList = () => {
 }
 
 export const questData = (id: number): QuestData => {
-  return { ...fgo_quest_data[id], drop: questDropItems(id) }
+  if (fgo_quest_data[id]) {
+    return { ...fgo_quest_data[id], drop: questDropItems(id) }
+  }
+  return undefined
 }
