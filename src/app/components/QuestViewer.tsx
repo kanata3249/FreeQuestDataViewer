@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
+import { isMobile } from 'react-device-detect'
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core'
 
@@ -143,8 +143,7 @@ export const QuestViewer: FC<Props> = (props) => {
     )
   }
   const theme = useTheme();
-  const isSP = useMediaQuery(theme.breakpoints.down('xs'));
-  const enemyInfoTableColumns = isSP ? enemyInfoTableColumnsSP : enemyInfoTableColumnsPC
+  const enemyInfoTableColumns = isMobile ? enemyInfoTableColumnsSP : enemyInfoTableColumnsPC
   const cellClassNames = [[ classes.body, classes.body2nd ], [classes.bodyOdd, classes.body2ndOdd ]]
 
   return (
@@ -171,7 +170,7 @@ export const QuestViewer: FC<Props> = (props) => {
       </TableContainer>
       <p></p>
       <TableContainer>
-        {!isSP &&
+        {!isMobile &&
           <Table>
             <TableHead>
               {enemyInfoTableColumns.map((row, rowIdx) =>

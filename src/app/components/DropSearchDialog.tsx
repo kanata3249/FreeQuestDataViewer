@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react'
 import { makeStyles, createStyles, Theme, useTheme } from '@material-ui/core/styles'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 import { Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
 import { List, ListItem, ListItemText, Checkbox, FormControlLabel, Select, MenuItem, ListSubheader } from '@material-ui/core'

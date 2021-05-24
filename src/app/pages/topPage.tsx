@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
+import { isMobile } from 'react-device-detect'
 
 import { AppBar, Menu, MenuItem, Toolbar, IconButton, Typography, Link, Divider } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -95,9 +95,6 @@ export const TopPage: FC = () => {
   const [ showDropSearchDialog, setShowDropSearchDialog ] = useState(false)
 
   const theme = useTheme();
-  const isPC = () => {
-    return useMediaQuery(theme.breakpoints.up('xl'));
-  }
 
   const updateMemo = () => {
     setUpdateCount(updateCount + 1)
@@ -199,7 +196,7 @@ export const TopPage: FC = () => {
             </IconButton>
             <Menu id="main-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
               <MenuItem onClick={handleShowDropSearchDialog}>ドロップ検索</MenuItem>
-              {isPC() && <MenuItem onClick={handleShowHideCounter}>{!showCounter ? "周回カウンタ表示" : "周回カウンタ非表示"} </MenuItem>}
+              {!isMobile && <MenuItem onClick={handleShowHideCounter}>{!showCounter ? "周回カウンタ表示" : "周回カウンタ非表示"} </MenuItem>}
               <Divider />
               <MenuItem onClick={handleExportMemo}>メモ書き出し</MenuItem>
               <MenuItem onClick={handleImportMemo}>メモ読み込み</MenuItem>

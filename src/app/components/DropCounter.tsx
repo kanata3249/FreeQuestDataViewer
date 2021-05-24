@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 import { Grid, TextField } from '@material-ui/core'
 
@@ -34,7 +33,6 @@ const useStyles = makeStyles((theme: Theme) => (
 export const DropCounter: FC<Props> = (props) => {
   const classes = useStyles()
   const theme = useTheme()
-  const isSP = useMediaQuery(theme.breakpoints.down('xs'))
 
   const [ start, setStart ] = useState(props.dropCount.start)
   const [ current, setCurrent ] = useState(props.dropCount.current)

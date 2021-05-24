@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 import { Grid, Button, TextField, FormLabel, Typography, colors } from '@material-ui/core'
 
@@ -158,7 +157,6 @@ const BondWithBonusInput: FC<BondWithBonusInputProp> = (props) => {
 export const FarmingCounter: FC<Props> = (props) => {
   const classes = useStyles()
   const theme = useTheme()
-  const isSP = useMediaQuery(theme.breakpoints.down('xs'))
   const counterData = parseCounterData(props.counterData)
   const [ bondPerQuestKey, setBondPerQuestKey ] = useState(0)
   const [ dropCounterKey, setDropCounterKey ] = useState(0)
