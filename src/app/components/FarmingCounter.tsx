@@ -62,6 +62,8 @@ const parseCounterData = (counterData: string) => {
 const bondBonusArray = [
   "+0",
   "+50",
+  "5%",
+  "5%+50",
   "10%",
   "10%+50",
   "15%",
