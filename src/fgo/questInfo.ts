@@ -111,7 +111,7 @@ export const questListByDropItem = (itemId: number) : QuestDropRates[] =>
 
 const questDropItems = (questId: number): { id: number, group: string, name: string, rate: number }[] => {
   const questDrop = questDropList[questId]
-  const dropItemIds = Object.keys(questDrop).map((key) => Number(key))
+  const dropItemIds = questDrop && Object.keys(questDrop).map((key) => Number(key)) || []
   const itemGroup = (itemId: number) => ((itemId / 100) >> 0)
   const itemSubGroup = (itemId: number) => (((itemId / 10) % 10) >> 0)
 
