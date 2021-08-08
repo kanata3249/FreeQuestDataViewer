@@ -80,6 +80,14 @@ const questDropList: { [id: string]: { [itemId: string]: string } } = require('.
 const itemNames: { [id: string]: string } = require('./itemnames.json')
 const group = [ "", "", "スキル石", "銅素材", "銀素材", "金素材", "モニュメント・ピース", "", "伝承結晶" ]
 
+// temporary fix
+const prevQuestDropList: { [id: string]: { [itemId: string]: string } } = require('./dropdata.prev.json')
+Object.entries(prevQuestDropList).forEach(([questId, dropItems]) => {
+  if (!(questDropList[questId] && Object.keys(questDropList[questId]).length)) {
+    questDropList[questId] = dropItems
+  }
+})
+
 export const dropItems = (): DropItem[] => {
   return Object.entries(itemNames).reduce((acc, [idString, name]) => {
     const id = Number(idString)
