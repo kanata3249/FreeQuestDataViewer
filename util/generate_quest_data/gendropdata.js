@@ -32,6 +32,7 @@ const known_areas = {
   "ユガ・クシェートラ": true,
   "アトランティス": true,
   "オリュンポス": true,
+  "アヴァロン": true,
   "平安京": true,
 }
 
