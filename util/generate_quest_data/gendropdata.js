@@ -39,6 +39,7 @@ const known_areas = {
 const convertKeyName = {
   "エリア": "chapter",
   "クエスト名": "questName",
+  "サンプル数": "sampleCount",
 
   "輝石, 剣": "200",
   "輝石, 弓": "201",
@@ -161,7 +162,7 @@ const ignore_categories = {
 const columns = {}
 
 Object.keys(rows[0]).forEach((key) => {
-  if (rows[0][key].$t && rows[0][key].$t.match(/^(エリア|クエスト名)/)) {
+  if (rows[0][key].$t && rows[0][key].$t.match(/^(エリア|クエスト名|サンプル数)/)) {
     columns[key] = rows[0][key].$t
   }
 })
@@ -185,7 +186,10 @@ const results = rows.slice(2).map((row) => (
     return acc
   }, {})
 )).filter((quest) => {
-  return known_areas[quest["chapter"]]
+  if (quest.sampleCount < 100) {
+//    console.log(quest.chapter, quest.questName, quest.sampleCount)
+  }
+  return known_areas[quest["chapter"]] && quest.sampleCount >= 100
 }).reduce((acc, quest) => {
   const { chapter, questName, ...droprates } = quest
   acc[findQuestId(questName)] = droprates
