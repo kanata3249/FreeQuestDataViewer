@@ -2,16 +2,17 @@
 // convert drop data json to json
 //
 // Expected json format.
-// FGOアイテム効率劇場 published json
-//    https://spreadsheets.google.com/feeds/list/1TrfSDteVZnjUPz68rKzuZWZdZZBLqw03FlvEToOvqH0/8/public/values?alt=json
+// FGOアイテム効率劇場
+//    https://docs.google.com/spreadsheets/d/1TrfSDteVZnjUPz68rKzuZWZdZZBLqw03FlvEToOvqH0/gviz/tq?gid=56582984
 //
 
 fs = require('fs')
 
 const questdata = require('./quest.json')
 
-const dropdata = JSON.parse(fs.readFileSync(process.argv[2], "utf8"))
-const rows = dropdata.feed.entry
+const dropdataFileContents = fs.readFileSync(process.argv[2]).toString()
+const dropdata = JSON.parse(dropdataFileContents.replace(/\r?\n/g, "").replace(/^.*setResponse\((.*)\);$/, "$1"))
+const table = dropdata.table
 
 const known_areas = {
   "冬木": true,
@@ -159,35 +160,45 @@ const ignore_categories = {
   "ティータイム（茶）": true
 }
 
-const columns = {}
+const ignore_prefix = {
+  "1周あたりのドロップ率（％）": true,
+  "PC用表示": true
+}
 
-Object.keys(rows[0]).forEach((key) => {
-  if (rows[0][key].$t && rows[0][key].$t.match(/^(エリア|クエスト名|サンプル数)/)) {
-    columns[key] = rows[0][key].$t
+let curPrefix = ""
+const columns = table.cols.map((cell, index) => {
+  if (cell) {
+    const tokens = cell.label.split(/\s+/)
+    if (tokens.length > 1 && tokens[1].length) {
+      if (ignore_prefix[tokens[0]]) {
+        return `${tokens[1]}`
+      }
+      curPrefix = tokens[0]
+      return `${curPrefix}, ${tokens[1]}`
+    } else {
+      if (curPrefix.length) {
+        return `${curPrefix}, ${tokens[0]}`
+      }
+      return tokens[0]
+    }
   }
+  return ""
 })
 
-let category = ""
-Object.keys(rows[1]).forEach((key) => {
-  if (key.startsWith('gsx$_')) {
-    if (rows[0][key]) {
-      category = rows[0][key].$t
-    }
-    if (!ignore_categories[category]) {
-      columns[key] = category + ", " + rows[1][key].$t
-    }
+const results = table.rows.reduce((acc, row) => {
+  if (row.c[0] && row.c[1]) {
+    acc.push(row.c.reduce((acc, cell, index) => {
+      if (cell && cell.v && convertKeyName[columns[index]]) {
+        acc[convertKeyName[columns[index]]] = cell.v
+      }
+      return acc
+    },{}))
+  
   }
-})
-const results = rows.slice(2).map((row) => (
-  Object.keys(columns).reduce((acc, columnKey) => {
-    if (row[columnKey] && convertKeyName[columns[columnKey]]) {
-      acc[convertKeyName[columns[columnKey]]] = row[columnKey].$t
-    }
-    return acc
-  }, {})
-)).filter((quest) => {
+  return acc
+},[]).filter((quest) => {
   if (quest.sampleCount < 100) {
-//    console.log(quest.chapter, quest.questName, quest.sampleCount)
+    console.log("filter", quest.chapter, quest.questName, quest.sampleCount)
   }
   return known_areas[quest["chapter"]] && quest.sampleCount >= 100
 }).reduce((acc, quest) => {
