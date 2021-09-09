@@ -1,5 +1,5 @@
 
-const oldDropData = require('./dropdata.old.json')
+const oldDropData = require('./../../src/fgo/dropdata.json')
 const newDropData = require('./dropdata.json')
 const questData = require('./quest.json')
 const itemNames = require('../../src/fgo/itemNames.json')
