@@ -40,7 +40,7 @@ const known_areas = {
 const convertKeyName = {
   "エリア": "chapter",
   "クエスト名": "questName",
-  "サンプル数": "sampleCount",
+  "Best5表はこちら, サンプル数": "sampleCount",
 
   "輝石, 剣": "200",
   "輝石, 弓": "201",
