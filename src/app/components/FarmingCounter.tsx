@@ -58,6 +58,9 @@ const parseCounterData = (counterData: string) => {
     const parsedCounterData = JSON.parse(counterData)
     if (parsedCounterData && !parsedCounterData.values) {
       parsedCounterData.values = parsedCounterData.bond
+      parsedCounterData.values.perQuest = parsedCounterData.bond.bondPerQuest
+      parsedCounterData.values.modifier = parsedCounterData.bond.bondModifier
+
       parsedCounterData.values.direction = -1
     }
     return { ...emptyCountData, ...parsedCounterData }
