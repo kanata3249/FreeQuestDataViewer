@@ -55,7 +55,12 @@ const emptyCountData: CounterData = {
 
 const parseCounterData = (counterData: string) => {
   try {
-    return { ...emptyCountData, ...JSON.parse(counterData) }
+    const parsedCounterData = JSON.parse(counterData)
+    if (parsedCounterData && !parsedCounterData.values) {
+      parsedCounterData.values = parsedCounterData.bond
+      parsedCounterData.values.direction = -1
+    }
+    return { ...emptyCountData, ...parsedCounterData }
   } catch (e) {
     return emptyCountData
   }
