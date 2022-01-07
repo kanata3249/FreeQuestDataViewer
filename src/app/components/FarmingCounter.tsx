@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles'
 
-import { Grid, Button, TextField, FormLabel, Typography, colors } from '@material-ui/core'
+import { Grid, Button, TextField, FormLabel, Typography, FormControlLabel, Checkbox } from '@material-ui/core'
 
 import { FormattedTextField } from './FormattedTextField'
 import { DropCounter } from './DropCounter'
@@ -26,11 +26,12 @@ type CounterData = {
 
   count: number
 
-  bond: {
-    bondPerQuest: number
-    bondModifier: string
+  values: {
+    perQuest: number
+    modifier: string
     start: number
     current: number
+    direction: number
   }
 
   dropCounts: DropCount[]
@@ -39,11 +40,12 @@ type CounterData = {
 const emptyCountData: CounterData = {
   title: "",
   count: 0,
-  bond: {
-    bondPerQuest: 0,
-    bondModifier: "+0",
+  values: {
+    perQuest: 0,
+    modifier: "+0",
     start: 0,
-    current: 0
+    current: 0,
+    direction: -1
   },
   dropCounts: Array<DropCount>(8).fill({
     start: 0,
@@ -53,7 +55,7 @@ const emptyCountData: CounterData = {
 
 const parseCounterData = (counterData: string) => {
   try {
-    return JSON.parse(counterData) as CounterData || emptyCountData
+    return { ...emptyCountData, ...JSON.parse(counterData) }
   } catch (e) {
     return emptyCountData
   }
@@ -116,9 +118,9 @@ const calculateBondWithBonus = (bond, modifier) => {
 }
 
 const calculateCountByBond = (counterData: CounterData) => {
-  const divider = calculateBondWithBonus(counterData.bond.bondPerQuest, counterData.bond.bondModifier).totalBond
+  const divider = calculateBondWithBonus(counterData.values.perQuest, counterData.values.modifier).totalBond
   if (divider)
-    return Math.abs((counterData.bond.current - counterData.bond.start) / divider)
+    return counterData.values.direction * (counterData.values.current - counterData.values.start) / divider
   return 0
 }
 
@@ -178,42 +180,43 @@ export const FarmingCounter: FC<Props> = (props) => {
     props.onChange(JSON.stringify(newCounterData))
   }
   const handleBondPerQuestChanged = (value: number) => {
-    const newCounterData = { ...counterData, bond: { ...counterData.bond, bondPerQuest: value } }
+    const newCounterData = { ...counterData, values: { ...counterData.values, perQuest: value } }
     props.onChange(JSON.stringify(newCounterData))
   }
   const handleBondBonusChanged = (e : React.ChangeEvent<HTMLInputElement>) => {
-    const newCounterData = { ...counterData, bond: { ...counterData.bond, bondModifier: e.target.value } }
+    const newCounterData = { ...counterData, values: { ...counterData.values, modifier: e.target.value } }
     updateBondPerQuest()
     props.onChange(JSON.stringify(newCounterData))
   }
   const handleBondStartChanged = (e : React.ChangeEvent<HTMLInputElement>) => {
-    const newCounterData = { ...counterData, bond: { ...counterData.bond, start: Number.parseInt(e.target.value) || 0 } }
+    const newCounterData = { ...counterData, values: { ...counterData.values, start: Number.parseInt(e.target.value) || 0 } }
     props.onChange(JSON.stringify(newCounterData))
   }
   const handleBondCurrentChanged = (e : React.ChangeEvent<HTMLInputElement>) => {
-    const newCounterData = { ...counterData, bond: { ...counterData.bond, current: Number.parseInt(e.target.value) || 0 } }
+    const newCounterData = { ...counterData, values: { ...counterData.values, current: Number.parseInt(e.target.value) || 0 } }
     props.onChange(JSON.stringify(newCounterData))
   }
   const handleBondCountChanged = (e : React.ChangeEvent<HTMLInputElement>) => {
     const newCount = Number.parseInt(e.target.value)
     if (!Number.isNaN(newCount)) {
-      const oldCount = calculateCountByBond(counterData) >> 0
-      const bondWithBonus = calculateBondWithBonus(counterData.bond.bondPerQuest, counterData.bond.bondModifier).totalBond
-      if (Math.abs(newCount - oldCount) == 1) {
-        counterData.bond.current = counterData.bond.start - (newCount * bondWithBonus)
-        props.onChange(JSON.stringify(counterData))
-      }
+      const bondWithBonus = calculateBondWithBonus(counterData.values.perQuest, counterData.values.modifier).totalBond
+      counterData.values.current = counterData.values.start + counterData.values.direction * (newCount * bondWithBonus)
+      props.onChange(JSON.stringify(counterData))
     }
   }
   const handleDropCountChanged = (index: number, dropCount: DropCount) => {
     counterData.dropCounts[index] = dropCount
     props.onChange(JSON.stringify(counterData))
   }
+  const handleDirectionChanged = (e :React.ChangeEvent<HTMLInputElement>) => {
+    const newCounterData = { ...counterData, values: { ...counterData.values, direction: e.target.checked ? 1 : -1 } }
+    props.onChange(JSON.stringify(newCounterData))
+  }
   const applyCountByBond = () => {
     const newCounterData = {
       ...counterData,
       count: counterData.count + calculateCountByBond(counterData),
-      bond: { ...counterData.bond, start: counterData.bond.current }
+      values: { ...counterData.values, start: counterData.values.current }
     }
     props.onChange(JSON.stringify(newCounterData))
   }
@@ -227,7 +230,7 @@ export const FarmingCounter: FC<Props> = (props) => {
   }
   const applyQuestData = () => {
     const { title, bond } = props.questData()
-    const newCounterData = { ...counterData, title, bond: { ...counterData.bond, bondPerQuest: bond }}
+    const newCounterData = { ...counterData, title, values: { ...counterData.values, perQuest: bond }}
     updateBondPerQuest()
     props.onChange(JSON.stringify(newCounterData))
   }
@@ -260,22 +263,22 @@ export const FarmingCounter: FC<Props> = (props) => {
       <Grid item>
         <Grid container alignItems="baseline" spacing={1}>
           <Grid item>
-            <BondWithBonusInput label="絆" onChange={handleBondPerQuestChanged} key={bondPerQuestKey}
-              value={counterData.bond.bondPerQuest} modifier={counterData.bond.bondModifier} size="small" inputProps={{className: classes.bondTextField}} />
+            <BondWithBonusInput label="1周あたり" onChange={handleBondPerQuestChanged} key={bondPerQuestKey}
+              value={counterData.values.perQuest} modifier={counterData.values.modifier} size="small" inputProps={{className: classes.bondTextField}} />
           </Grid>
           <Grid item>
-            <TextField label="ボーナス" onChange={handleBondBonusChanged} value={counterData.bond.bondModifier} size="small" select SelectProps={{ native: true }}>
+            <TextField label="ボーナス" onChange={handleBondBonusChanged} value={counterData.values.modifier} size="small" select SelectProps={{ native: true }}>
             {bondBonusArray.map((bonus) =>
               <option key={bonus} value={bonus}>{bonus}</option>)}
             </TextField>
           </Grid>
           <Grid item>
-            <TextField label="絆 開始値" onChange={handleBondStartChanged} value={counterData.bond.start}
+            <TextField label="開始値" onChange={handleBondStartChanged} value={counterData.values.start}
               size="small" type="number" inputProps={{className: classes.textField}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
           <Grid item>
-            <TextField label="絆 現在値" onChange={handleBondCurrentChanged} value={counterData.bond.current}
+            <TextField label="現在値" onChange={handleBondCurrentChanged} value={counterData.values.current}
               size="small" type="number" inputProps={{className: classes.textField}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
             </Grid>
@@ -288,6 +291,9 @@ export const FarmingCounter: FC<Props> = (props) => {
             <Button onClick={applyCountByBond} disabled={!isApplyOK()} variant="outlined" >トータル周<br/>回数へ反映</Button>
           </Grid>
         </Grid>
+        <FormControlLabel label="累積値で計算" control={
+          <Checkbox size="small" checked={counterData.values.direction < 0 ? false : true} color="default" onChange={handleDirectionChanged} />}
+        />
       </Grid>
       <Grid item>
         <FormLabel><Typography variant="caption">ドロップ</Typography></FormLabel>
