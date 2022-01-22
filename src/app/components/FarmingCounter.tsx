@@ -109,7 +109,8 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     title: { width: 300 },
     total: { width: 100 },
-    bondTextField: { width: 130, textAlign: "right", paddingRight: 15 },
+    bondTextField: { width: 110, textAlign: "right", paddingRight: 15 },
+    valueTextField: { width: 90, paddingRight: 5, textAlign: "right" },
     textField: { width: 80, paddingRight: 5, textAlign: "right" }
   })
 })
@@ -282,12 +283,12 @@ export const FarmingCounter: FC<Props> = (props) => {
           </Grid>
           <Grid item>
             <TextField label="開始値" onChange={handleBondStartChanged} value={counterData.values.start}
-              size="small" type="number" inputProps={{className: classes.textField}}
+              size="small" type="number" inputProps={{className: classes.valueTextField}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
           <Grid item>
             <TextField label="現在値" onChange={handleBondCurrentChanged} value={counterData.values.current}
-              size="small" type="number" inputProps={{className: classes.textField}}
+              size="small" type="number" inputProps={{className: classes.valueTextField}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
             </Grid>
           <Grid item>
