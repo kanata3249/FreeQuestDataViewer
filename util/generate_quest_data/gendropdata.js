@@ -41,6 +41,7 @@ const convertKeyName = {
   "エリア": "chapter",
   "クエスト名": "questName",
   "Best5表はこちら, データ数": "sampleCount",
+  "データ数": "sampleCount",
 
   "輝石, 剣": "200",
   "輝石, 弓": "201",
@@ -184,6 +185,9 @@ const columns = table.cols.map((cell, index) => {
   }
   return ""
 })
+if (!columns[columns.findIndex((v) => v == '銅素材, 証') - 1]) {
+  columns[columns.findIndex((v) => v == '銅素材, 証') - 1] = 'データ数'
+}
 
 const results = table.rows.reduce((acc, row) => {
   if (row.c[0] && row.c[1]) {
@@ -197,10 +201,10 @@ const results = table.rows.reduce((acc, row) => {
   }
   return acc
 },[]).filter((quest) => {
-  if (quest.sampleCount < 100) {
+  if (quest.sampleCount && quest.sampleCount < 100) {
     console.log("filter", quest.chapter, quest.questName, quest.sampleCount)
   }
-  return known_areas[quest["chapter"]] && quest.sampleCount >= 100
+  return known_areas[quest["chapter"]] && (!quest.sampleCount || quest.sampleCount >= 100)
 }).reduce((acc, quest) => {
   const { chapter, questName, ...droprates } = quest
   acc[findQuestId(questName)] = droprates
