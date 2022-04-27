@@ -1,3 +1,6 @@
+src/fgo/quest.json
+src/fgo/dropdata.json
+
 # Logs
 logs
 *.log
