@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles'
 
-import { Grid, Button, TextField, FormLabel, Typography, FormControlLabel, Checkbox } from '@material-ui/core'
+import { Grid, Button, TextField, FormLabel, Typography, FormControlLabel, Radio, RadioGroup } from '@material-ui/core'
 
 import { FormattedTextField } from './FormattedTextField'
 import { DropCounter } from './DropCounter'
@@ -32,6 +32,7 @@ type CounterData = {
     start: number
     current: number
     direction: number
+    useMod: boolean
   }
 
   dropCounts: DropCount[]
@@ -45,7 +46,8 @@ const emptyCountData: CounterData = {
     modifier: "+0",
     start: 0,
     current: 0,
-    direction: -1
+    direction: -1,
+    useMod: false
   },
   dropCounts: Array<DropCount>(8).fill({
     start: 0,
@@ -126,11 +128,28 @@ const calculateBondWithBonus = (bond, modifier) => {
   }
 }
 
-const calculateCountByBond = (counterData: CounterData) => {
-  const divider = calculateBondWithBonus(counterData.values.perQuest, counterData.values.modifier).totalBond
-  if (divider)
-    return counterData.values.direction * (counterData.values.current - counterData.values.start) / divider
-  return 0
+const calculateCount = (counterData: CounterData) => {
+  if (counterData.values.useMod) {
+    const bondWithBonus = calculateBondWithBonus(counterData.values.perQuest, counterData.values.modifier).totalBond
+    const cur = counterData.values.current % 100
+    const mods = [...Array(100)].map((_, i) => (i * bondWithBonus + counterData.values.start) % 100)
+    return mods.findIndex((v) => v == cur)
+  } else {
+    const divider = calculateBondWithBonus(counterData.values.perQuest, counterData.values.modifier).totalBond
+    if (divider)
+      return counterData.values.direction * (counterData.values.current - counterData.values.start) / divider
+    return 0
+  }
+}
+
+const updateByCount = (counterData: CounterData, newCount: number) => {
+  if (counterData.values.useMod) {
+    const bondWithBonus = calculateBondWithBonus(counterData.values.perQuest, counterData.values.modifier).totalBond
+    return { ...counterData, values: { ...counterData.values, current: (counterData.values.start + bondWithBonus * newCount) % 100 } }
+  } else {
+    const bondWithBonus = calculateBondWithBonus(counterData.values.perQuest, counterData.values.modifier).totalBond
+    return { ...counterData, values: { ...counterData.values, current: counterData.values.start + counterData.values.direction * (newCount * bondWithBonus) } }
+  }
 }
 
 type BondWithBonusInputProp = {
@@ -208,33 +227,38 @@ export const FarmingCounter: FC<Props> = (props) => {
   const handleBondCountChanged = (e : React.ChangeEvent<HTMLInputElement>) => {
     const newCount = Number.parseInt(e.target.value)
     if (!Number.isNaN(newCount)) {
-      const bondWithBonus = calculateBondWithBonus(counterData.values.perQuest, counterData.values.modifier).totalBond
-      counterData.values.current = counterData.values.start + counterData.values.direction * (newCount * bondWithBonus)
-      props.onChange(JSON.stringify(counterData))
+      props.onChange(JSON.stringify(updateByCount(counterData, newCount)))
     }
   }
   const handleDropCountChanged = (index: number, dropCount: DropCount) => {
     counterData.dropCounts[index] = dropCount
     props.onChange(JSON.stringify(counterData))
   }
-  const handleDirectionChanged = (e :React.ChangeEvent<HTMLInputElement>) => {
-    const newCounterData = { ...counterData, values: { ...counterData.values, direction: e.target.checked ? 1 : -1 } }
+  const handleModeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newCounterData = JSON.parse(JSON.stringify(counterData))
+    const mode = (event.target as HTMLInputElement).value
+    newCounterData.values.useMod = false
+    if (mode == "mod") {
+      newCounterData.values.useMod = true
+    } else {
+      newCounterData.values.direction = mode == "dsc" ? -1 : 1
+    }
     props.onChange(JSON.stringify(newCounterData))
   }
   const applyCountByBond = () => {
     const newCounterData = {
       ...counterData,
-      count: counterData.count + calculateCountByBond(counterData),
+      count: counterData.count + calculateCount(counterData),
       values: { ...counterData.values, start: counterData.values.current }
     }
     props.onChange(JSON.stringify(newCounterData))
   }
   const isApplyOK = () => {
-    const count = calculateCountByBond(counterData)
+    const count = calculateCount(counterData)
     return Number.isInteger(count) && (count != 0)
   }
   const isBondCountValid = () => {
-    const count = calculateCountByBond(counterData)
+    const count = calculateCount(counterData)
     return Number.isInteger(count)
   }
   const applyQuestData = () => {
@@ -292,7 +316,7 @@ export const FarmingCounter: FC<Props> = (props) => {
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
             </Grid>
           <Grid item>
-            <TextField label="換算周回数" onChange={handleBondCountChanged} value={calculateCountByBond(counterData)}
+            <TextField label="換算周回数" onChange={handleBondCountChanged} value={calculateCount(counterData)}
               error={!isBondCountValid()} size="small" type="number" inputProps={{min: 0, className: classes.textField}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
@@ -300,9 +324,17 @@ export const FarmingCounter: FC<Props> = (props) => {
             <Button onClick={applyCountByBond} disabled={!isApplyOK()} variant="outlined" >トータル周<br/>回数へ反映</Button>
           </Grid>
         </Grid>
-        <FormControlLabel label="累積値で計算" control={
-          <Checkbox size="small" checked={counterData.values.direction < 0 ? false : true} color="default" onChange={handleDirectionChanged} />}
-        />
+      </Grid>
+      <Grid item>
+        <FormLabel id="count-mode-group-label">カウント方法</FormLabel>
+        <RadioGroup name="mode"
+          row aria-labelledby="count-mode-group-label"
+          value={counterData.values.useMod ? "mod" : counterData.values.direction < 0 ? "dsc" : "asc"}
+          onChange={handleModeChanged} >
+          <FormControlLabel value="dsc" control={<Radio color="default" size="small" />} label="残値" />
+          <FormControlLabel value="asc" control={<Radio color="default" size="small" />} label="累積値" />
+          <FormControlLabel value="mod" control={<Radio color="default" size="small" />} label="QP下2桁" />
+        </RadioGroup>
       </Grid>
       <Grid item>
         <FormLabel><Typography variant="caption">ドロップ</Typography></FormLabel>
@@ -310,7 +342,7 @@ export const FarmingCounter: FC<Props> = (props) => {
           {counterData.dropCounts.map((dropCount: DropCount, idx: number) => (
             <Grid item key={`${idx}-${counterData.count}`}>
               <DropCounter onChange={handleDropCountChanged} onChangeArg={idx} noTextLabel={idx != 0}
-                dropCount={dropCount} divider={counterData.count + calculateCountByBond(counterData)} key={`${dropCounterKey}-${idx}-${counterData.count}`}/>
+                dropCount={dropCount} divider={counterData.count + calculateCount(counterData)} key={`${dropCounterKey}-${idx}-${counterData.count}`}/>
             </Grid>
           ))}
         </Grid>
