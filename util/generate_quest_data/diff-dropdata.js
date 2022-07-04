@@ -21,14 +21,16 @@ Object.keys(newDropData).forEach((questId) => {
   if (oldDropRates && Object.keys(oldDropRates).length > 0) {
     if (JSON.stringify(dropRates) != JSON.stringify(oldDropRates)) {
       Object.keys(dropRates).forEach((itemId) => {
-        if (Math.abs(parseFloat(dropRates[itemId]) - parseFloat(oldDropRates[itemId])) >= delta) {
+        if (itemNames[itemId] && Math.abs(parseFloat(dropRates[itemId]) - parseFloat(oldDropRates[itemId])) >= delta) {
           console.log(`${questNames[questId]}\t${itemNames[itemId]}\t${oldDropRates[itemId]}\t${dropRates[itemId]}`)
         }
       })
     }
   } else {
     Object.keys(dropRates).forEach((itemId) => {
-      console.log(`${questNames[questId]}\t${itemNames[itemId]}\t0.0\t${dropRates[itemId]}`)
+      if (itemNames[itemId]) {
+        console.log(`${questNames[questId]}\t${itemNames[itemId]}\t0.0\t${dropRates[itemId]}`)
+      }
     })
   }
 })
