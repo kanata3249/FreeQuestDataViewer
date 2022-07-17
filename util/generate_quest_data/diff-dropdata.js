@@ -2,7 +2,7 @@
 const oldDropData = require('./../../src/fgo/dropdata.json')
 const newDropData = require('./dropdata.json')
 const questData = require('./quest.json')
-const itemNames = require('../../src/fgo/itemNames.json')
+const itemNames = require('../../src/fgo/itemnames.json')
 
 const delta = parseFloat(process.argv[2])
 
