@@ -231,6 +231,15 @@ export const QuestViewer: FC<Props> = (props) => {
                 </TableCell>
               </TableRow>
             }
+            {questData.drop.find((drop) => drop.group == "種火") &&
+              <TableRow>
+                <TableCell className={classes.body}>
+                  {questData.drop
+                    .filter((drop) => drop.group == "種火")
+                    .map((drop) => `${drop.name}: ${drop.rate}%`).join(" ")}
+                </TableCell>
+              </TableRow>
+            }
           </TableBody>
         </Table>
       </TableContainer>

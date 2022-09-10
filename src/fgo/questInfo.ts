@@ -78,7 +78,7 @@ Object.values(fgo_quest_data).forEach((quest) => {
 
 const questDropList: { [id: string]: { [itemId: string]: string } } = require('./dropdata.json')
 const itemNames: { [id: string]: string } = require('./itemnames.json')
-const group = [ "", "", "スキル石", "銅素材", "銀素材", "金素材", "モニュメント・ピース", "", "伝承結晶" ]
+const group = [ "", "種火", "スキル石", "銅素材", "銀素材", "金素材", "モニュメント・ピース", "", "伝承結晶" ]
 
 export const dropItems = (): DropItem[] => {
   return Object.entries(itemNames).reduce((acc, [idString, name]) => {
@@ -122,6 +122,7 @@ const questDropItems = (questId: number): { id: number, group: string, name: str
     ...dropItemIds.filter((itemId) => (itemId == 308)),
     ...dropItemIds.filter((itemId) => (itemGroup(itemId) == 2)).sort((a, b) => (itemSubGroup(b) - itemSubGroup(a)) || (a - b)),
     ...dropItemIds.filter((itemId) => (itemGroup(itemId) == 6)).sort((a, b) => (itemSubGroup(b) - itemSubGroup(a)) || (a - b)),
+    ...dropItemIds.filter((itemId) => (itemGroup(itemId) == 1)).sort((a, b) => (itemSubGroup(b) - itemSubGroup(a)) || (a - b)),
   ]
 
   return sortedDropItemIds.map((itemId) => (
