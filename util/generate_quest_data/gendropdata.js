@@ -34,6 +34,7 @@ const known_areas = {
   "アトランティス": true,
   "オリュンポス": true,
   "アヴァロン": true,
+  "ナウイ・ミクトラン": true,
   "平安京": true,
   "トラオム": true,
 }
@@ -98,6 +99,7 @@ const convertKeyName = {
   "銅素材, 小鐘": "309",
   "銅素材, 剣": "310",
   "銅素材, 灰": "311",
+  "銅素材, 刃": "312",
   
   "銀素材, 種": "400",
   "銀素材, ﾗﾝﾀﾝ": "401",
@@ -120,6 +122,7 @@ const convertKeyName = {
   "銀素材, 霊子": "418",
   "銀素材, 糸玉": "419",
   "銀素材, 鱗粉": "420",
+  "銀素材, 皮": "421",
   
   "金素材, 爪": "500",
   "金素材, 心臓": "501",
@@ -157,6 +160,10 @@ const convertKeyName = {
   "モニュ, 狂モ": "616",
 }
 
+const fixQuestName = {
+  '角のような岩山': '賢者の隠れ家'
+}
+
 const findQuestId = (questName) => {
   const quest = questdata.quests.reduce((acc, chapter) => {
     return acc.concat(chapter.quests)
@@ -170,6 +177,9 @@ const findQuestId = (questName) => {
 
   if (quest) {
     return quest.id
+  }
+  if (fixQuestName[questName]) {
+    return findQuestId(fixQuestName[questName])
   }
   console.log("unknown quest name", questName)
   return "0"

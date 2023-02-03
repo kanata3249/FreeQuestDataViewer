@@ -7,7 +7,7 @@
     "get-questdata": "sh downloadQuestData.sh",
     "gen-questdata": "node csv2questdata.js 1_chapter.csv 2_area.csv 3_enemy.csv 4_quest.csv 5_quest_enemy.csv",
     "gen-dropdata": "node gendropdata.js 6_dropdata.json",
-    "get-dropdata": "curl -o 6_dropdata.json  https://docs.google.com/spreadsheets/d/1qjiymRgcpdAYv201jdzcfRSPKrNaquNRJGIRYFlaimo/gviz/tq?gid=645225049"
+    "get-dropdata": "curl -o 6_dropdata.json  https://docs.google.com/spreadsheets/d/1qjiymRgcpdAYv201jdzcfRSPKrNaquNRJGIRYFlaimo/gviz/tq?gid=1085791724"
   },
   "devDependencies": {
     "csvtojson": "^2.0.10"
