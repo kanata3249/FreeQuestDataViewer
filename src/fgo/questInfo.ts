@@ -71,7 +71,11 @@ const fgo_quest_data : QuestDataMap = JSON.parse(JSON.stringify(fgo_data.questDa
 Object.values(fgo_quest_data).forEach((quest) => {
   quest.enemies.forEach((wave) => {
     wave.forEach((enemy) => {
-      Object.assign(enemy, fgo_data.enemyData[enemy.enemyId])
+      if (fgo_data.enemyData[enemy.enemyId].name.match(/\n/)) {
+        Object.assign(enemy, fgo_data.enemyData[enemy.enemyId])
+      } else {
+        Object.assign(enemy, { ...fgo_data.enemyData[enemy.enemyId], name: enemy.name })
+      }
     })
   })
 })
