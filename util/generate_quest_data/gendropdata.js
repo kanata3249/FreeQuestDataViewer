@@ -34,7 +34,7 @@ const known_areas = {
   "アトランティス": true,
   "オリュンポス": true,
   "アヴァロン": true,
-  "ナウイ・ミクトラン": true,
+  "ミクトラン": true,
   "平安京": true,
   "トラオム": true,
 }

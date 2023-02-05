@@ -14,7 +14,7 @@ const questNames = questData.quests.reduce((acc, chapter) => {
   return acc
 }, {})
 
-console.log('chapter\tquest\titem\told\tnew')
+let changed = false
 Object.keys(newDropData).forEach((questId) => {
   const dropRates = newDropData[questId]
   const oldDropRates = oldDropData[questId]
@@ -22,6 +22,8 @@ Object.keys(newDropData).forEach((questId) => {
     if (JSON.stringify(dropRates) != JSON.stringify(oldDropRates)) {
       Object.keys(dropRates).forEach((itemId) => {
         if (itemNames[itemId] && Math.abs(parseFloat(dropRates[itemId]) - parseFloat(oldDropRates[itemId])) >= delta) {
+          !changed && console.log('chapter\tquest\titem\told\tnew') 
+          changed = true
           console.log(`${questNames[questId]}\t${itemNames[itemId]}\t${oldDropRates[itemId]}\t${dropRates[itemId]}`)
         }
       })
@@ -29,8 +31,18 @@ Object.keys(newDropData).forEach((questId) => {
   } else {
     Object.keys(dropRates).forEach((itemId) => {
       if (itemNames[itemId]) {
+        !changed && console.log('chapter\tquest\titem\told\tnew') 
+        changed = true
         console.log(`${questNames[questId]}\t${itemNames[itemId]}\t0.0\t${dropRates[itemId]}`)
       }
     })
   }
 })
+
+if (Object.keys(newDropData).length < Object.keys(oldDropData).length) {
+  console.log(`dropdata entries = ${Object.keys(newDropData).length},  less than previous entries = ${Object.keys(oldDropData).length}.`)
+  process.exitCode = 1
+} else {
+  !changed && console.log('no differences')
+  process.exitCode = changed ? 0 : 1
+}
