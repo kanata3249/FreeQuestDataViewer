@@ -88,6 +88,11 @@ const useStyles = makeStyles((theme: Theme) => (
   }))
 )
 
+const aliasForLv = {
+  91: '90+',
+  92: '90++'
+}
+const formatLv = (value: number) => aliasForLv[value] || value
 const formatNumber = (value: number) => Number(value).toLocaleString().padStart(6 + 1, String.fromCharCode(0xa0))
 const formatDR = (value: number) => `${value}%`
 
@@ -100,7 +105,7 @@ type TableColumnInfo = {
   span?: number
 }
 const questInfoTableColumns : TableColumnInfo[] = [
-  { label: 'Lv', key: 'lv', align: "left", width: "10%" },
+  { label: 'Lv', key: 'lv', align: "left", width: "10%", formatter: formatLv },
   { label: 'AP', key: 'ap', align: "left", width: "10%" },
   { label: '絆', key: 'bond', align: "left", width: "10%" },
   { label: 'Exp', key: 'exp', align: "left", width: "10%" },
