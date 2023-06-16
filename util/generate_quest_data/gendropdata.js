@@ -37,6 +37,7 @@ const known_areas = {
   "ミクトラン": true,
   "平安京": true,
   "トラオム": true,
+  "オーディール・コール": true,
 }
 
 const convertKeyName = {
@@ -239,7 +240,7 @@ const results = table.rows.reduce((acc, row) => {
   if (quest.sampleCount && quest.sampleCount < 100) {
     console.log("filter", quest.chapter, quest.questName, quest.sampleCount)
   }
-  return known_areas[quest["chapter"]] && (!quest.sampleCount || quest.sampleCount >= 100)
+  return known_areas[quest["chapter"]]
 }).reduce((acc, quest) => {
   const { chapter, questName, ...droprates } = quest
   acc[findQuestId(questName)] = droprates
