@@ -117,14 +117,31 @@ const useStyles = makeStyles((theme: Theme) => {
   })
 })
 
-const calculateBondWithBonus = (bond, modifier) => {
-  const bondModifier = {
-    a: Number.parseInt((modifier.match("([0-9]+)%") || ["0"])[0]),
-    b: Number.parseInt((modifier.match("\\+([0-9]+)") || ["0"])[0])
+const parseBondModifier = (modifiers: string) => {
+  const mods = modifiers?.split(/\+/) || [ '0%' ]
+  if (mods[0].length == 0) {
+    mods[0] = '0%'
+  }
+  if (mods[1]?.endsWith('%')) {
+    mods.splice(1, 0, '0')
   }
   return {
-    totalBond: (bond * (100 + bondModifier.a) / 100 + bondModifier.b) >> 0,
-    totalBondText: `${bond}(+${(bond * bondModifier.a / 100 + bondModifier.b) >> 0})`
+    bonus: Number.parseInt(mods[0]),
+    ceFixedBonus: Number.parseInt(mods[1] || '0'),
+    startupBonus: Number.parseInt(mods[2] || '0')
+  }
+}
+const formatBondModifier = (ceBonus: number, ceFixedBonus: number, startupBonus: number) => {
+  return `${ceBonus ? ceBonus + '%' : (ceFixedBonus ? '' : '+0')}${ceFixedBonus ? '+' + ceFixedBonus : ''}${startupBonus ? '+' + startupBonus + '%' : ''}`
+}
+const rounddown = (v: number) => (v >> 0)
+const calculateBondWithBonus = (base, modifier) => {
+  const bondModifier = parseBondModifier(modifier)
+
+  const totalBond = rounddown(rounddown(base * ( 1 + bondModifier.startupBonus / 100)) * (1 + bondModifier.bonus / 100) + bondModifier.ceFixedBonus)
+  return {
+    totalBond: totalBond,
+    totalBondText: `${base}(+${totalBond - base})`
   }
 }
 
