@@ -3,6 +3,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/core/styles'
 
 import { Grid, Button, TextField, FormLabel, Typography, FormControlLabel, Radio, RadioGroup } from '@material-ui/core'
+import { Popover, FormGroup, Checkbox } from '@material-ui/core'
 
 import { FormattedTextField } from './FormattedTextField'
 import { DropCounter } from './DropCounter'
@@ -73,27 +74,26 @@ const parseCounterData = (counterData: string) => {
 
 const bondBonusArray = [
   "+0",
-  "+50",
   "5%",
-  "5%+50",
   "10%",
-  "10%+50",
   "15%",
-  "15%+50",
   "20%",
-  "20%+50",
   "25%",
-  "25%+50",
   "30%",
-  "30%+50",
   "35%",
-  "35%+50",
   "40%",
-  "40%+50",
   "45%",
-  "45%+50",
   "50%",
-  "50%+50",
+  "55%",
+  "60%",
+  "65%",
+  "70%",
+  "75%",
+  "80%",
+  "85%",
+  "90%",
+  "95%",
+  "100%",
 ]
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -112,6 +112,7 @@ const useStyles = makeStyles((theme: Theme) => {
     title: { width: 300 },
     total: { width: 100 },
     bondTextField: { width: 110, textAlign: "right", paddingRight: 15 },
+    bondBonusTextField: { width: 110, textAlign: "right", paddingRight: 15 },
     valueTextField: { width: 90, paddingRight: 5, textAlign: "right" },
     textField: { width: 80, paddingRight: 5, textAlign: "right" }
   })
@@ -203,6 +204,89 @@ const BondWithBonusInput: FC<BondWithBonusInputProp> = (props) => {
   );
 }
 
+type BondBonusInputProp = {
+  label: string
+  value: string
+  size: 'small' | 'medium'
+  onChange(value: string): void
+  inputProps?: any
+}
+const BondBonusInput: FC<BondBonusInputProp> = (props) => {
+  const [anchorEl, setAnchorEl] = React.useState<HTMLInputElement | null>(null)
+  const [bonusText, setBonusText] = React.useState<string>(props.value)
+  const bondModifiers = parseBondModifier(bonusText)
+  const ceBonus = formatBondModifier(bondModifiers.bonus, 0, 0)
+
+  const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+    props.onChange(bonusText)
+  }
+  const onChangeCeBonus = (event : React.ChangeEvent<HTMLInputElement>) => {
+    const newBonusModifiers = parseBondModifier(event.target.value)
+    const newBonusText = formatBondModifier(newBonusModifiers.bonus, bondModifiers.ceFixedBonus, bondModifiers.startupBonus)
+    setBonusText(newBonusText)
+    props.onChange(newBonusText)
+  }
+  const onChangeCeFixedBonus = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      bondModifiers.ceFixedBonus = 50
+    } else {
+      bondModifiers.ceFixedBonus = 0
+    }
+    const newBonusText = formatBondModifier(bondModifiers.bonus, bondModifiers.ceFixedBonus, bondModifiers.startupBonus)
+    setBonusText(newBonusText)
+    props.onChange(newBonusText)
+  }
+  const onChangeStartupBonus = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      bondModifiers.startupBonus = (bondModifiers.startupBonus % 10 + 20)
+    } else {
+      bondModifiers.startupBonus = (bondModifiers.startupBonus % 10)
+    }
+    const newBonusText = formatBondModifier(bondModifiers.bonus, bondModifiers.ceFixedBonus, bondModifiers.startupBonus)
+    setBonusText(newBonusText)
+    props.onChange(newBonusText)
+  }
+  const onChangeStartupSupportBonus = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      bondModifiers.startupBonus = (((bondModifiers.startupBonus / 10) >> 0) * 10 + 4)
+    } else {
+      bondModifiers.startupBonus = (((bondModifiers.startupBonus / 10) >> 0) * 10)
+    }
+    const newBonusText = formatBondModifier(bondModifiers.bonus, bondModifiers.ceFixedBonus, bondModifiers.startupBonus)
+    setBonusText(newBonusText)
+    props.onChange(newBonusText)
+  }
+  return (
+    <>
+      <TextField label={props.label} value={bonusText} size={props.size} onClick={handleClick} inputProps={props.inputProps}>
+      </TextField>
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <FormGroup style={{marginLeft: 8, marginRight: 8, marginBottom: 8}}>
+          <TextField label='礼装/イベント' onChange={onChangeCeBonus} size={props.size} select value={ceBonus} SelectProps={{ native: true }}>
+            {bondBonusArray.map((bonus) =>
+                  <option key={bonus} value={bonus}>{bonus}</option>)}
+          </TextField>
+          <FormControlLabel control={<Checkbox id='ceFixedBonus' color='default' checked={bondModifiers.ceFixedBonus ? true : false} onChange={onChangeCeFixedBonus}/>} label='肖像' />
+          <FormControlLabel control={<Checkbox id='startupBonus' color='default' checked={bondModifiers.startupBonus >= 20} onChange={onChangeStartupBonus}/>} label='前衛' />
+          <FormControlLabel control={<Checkbox id='startupSupportBonus' color='default' checked={(bondModifiers.startupBonus % 10) ? true : false} onChange={onChangeStartupSupportBonus}/>} label='サポ前衛' />
+        </FormGroup>
+      </Popover>
+    </>
+  )
+}
+
 export const FarmingCounter: FC<Props> = (props) => {
   const classes = useStyles()
   const theme = useTheme()
@@ -228,8 +312,8 @@ export const FarmingCounter: FC<Props> = (props) => {
     const newCounterData = { ...counterData, values: { ...counterData.values, perQuest: value } }
     props.onChange(JSON.stringify(newCounterData))
   }
-  const handleBondBonusChanged = (e : React.ChangeEvent<HTMLInputElement>) => {
-    const newCounterData = { ...counterData, values: { ...counterData.values, modifier: e.target.value } }
+  const handleBondBonusChanged = (value: string) => {
+    const newCounterData = { ...counterData, values: { ...counterData.values, modifier: value } }
     updateBondPerQuest()
     props.onChange(JSON.stringify(newCounterData))
   }
@@ -317,10 +401,7 @@ export const FarmingCounter: FC<Props> = (props) => {
               value={counterData.values.perQuest} modifier={counterData.values.modifier} size="small" inputProps={{className: classes.bondTextField}} />
           </Grid>
           <Grid item>
-            <TextField label="ボーナス" onChange={handleBondBonusChanged} value={counterData.values.modifier} size="small" select SelectProps={{ native: true }}>
-            {bondBonusArray.map((bonus) =>
-              <option key={bonus} value={bonus}>{bonus}</option>)}
-            </TextField>
+            <BondBonusInput label="ボーナス" onChange={handleBondBonusChanged} value={counterData.values.modifier} size="small" inputProps={{className: classes.bondBonusTextField}} />
           </Grid>
           <Grid item>
             <TextField label="開始値" onChange={handleBondStartChanged} value={counterData.values.start}
