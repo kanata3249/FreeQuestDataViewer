@@ -213,8 +213,7 @@ type BondBonusInputProp = {
 }
 const BondBonusInput: FC<BondBonusInputProp> = (props) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLInputElement | null>(null)
-  const [bonusText, setBonusText] = React.useState<string>(props.value)
-  const bondModifiers = parseBondModifier(bonusText)
+  const bondModifiers = parseBondModifier(props.value)
   const ceBonus = formatBondModifier(bondModifiers.bonus, 0, 0)
 
   const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
@@ -222,12 +221,10 @@ const BondBonusInput: FC<BondBonusInputProp> = (props) => {
   }
   const handleClose = () => {
     setAnchorEl(null)
-    props.onChange(bonusText)
   }
   const onChangeCeBonus = (event : React.ChangeEvent<HTMLInputElement>) => {
     const newBonusModifiers = parseBondModifier(event.target.value)
     const newBonusText = formatBondModifier(newBonusModifiers.bonus, bondModifiers.ceFixedBonus, bondModifiers.startupBonus)
-    setBonusText(newBonusText)
     props.onChange(newBonusText)
   }
   const onChangeCeFixedBonus = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -237,7 +234,6 @@ const BondBonusInput: FC<BondBonusInputProp> = (props) => {
       bondModifiers.ceFixedBonus = 0
     }
     const newBonusText = formatBondModifier(bondModifiers.bonus, bondModifiers.ceFixedBonus, bondModifiers.startupBonus)
-    setBonusText(newBonusText)
     props.onChange(newBonusText)
   }
   const onChangeStartupBonus = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -247,7 +243,6 @@ const BondBonusInput: FC<BondBonusInputProp> = (props) => {
       bondModifiers.startupBonus = (bondModifiers.startupBonus % 10)
     }
     const newBonusText = formatBondModifier(bondModifiers.bonus, bondModifiers.ceFixedBonus, bondModifiers.startupBonus)
-    setBonusText(newBonusText)
     props.onChange(newBonusText)
   }
   const onChangeStartupSupportBonus = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -257,12 +252,11 @@ const BondBonusInput: FC<BondBonusInputProp> = (props) => {
       bondModifiers.startupBonus = (((bondModifiers.startupBonus / 10) >> 0) * 10)
     }
     const newBonusText = formatBondModifier(bondModifiers.bonus, bondModifiers.ceFixedBonus, bondModifiers.startupBonus)
-    setBonusText(newBonusText)
     props.onChange(newBonusText)
   }
   return (
     <>
-      <TextField label={props.label} value={bonusText} size={props.size} onClick={handleClick} inputProps={props.inputProps}>
+      <TextField label={props.label} value={props.value} size={props.size} onClick={handleClick} inputProps={props.inputProps}>
       </TextField>
       <Popover
         open={Boolean(anchorEl)}
