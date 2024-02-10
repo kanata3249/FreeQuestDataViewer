@@ -165,7 +165,9 @@ const convertKeyName = {
 }
 
 const fixQuestName = {
-  '角のような岩山': '賢者の隠れ家'
+  '角のような岩山': '賢者の隠れ家',
+  '久遠の微笑': '北大西洋エリア（久遠の微笑）',
+  '光糸導く迷宮': '北大西洋エリア（光糸導く迷宮）',
 }
 
 const findQuestId = (questName) => {
