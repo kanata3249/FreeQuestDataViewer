@@ -64,6 +64,7 @@ const importMemo = (json: string) =>
     memos.forEach((memo) => {
       const chapterInfo = Object.values(questList()).find((chapter) => {
         return chapter.name == memo.chapter
+                || chapter.name.split(/ /).pop() == memo.chapter.split(/ /).pop()
       })
       const questInfo = chapterInfo.quests.find((quest) => {
         return quest.name == memo.quest
