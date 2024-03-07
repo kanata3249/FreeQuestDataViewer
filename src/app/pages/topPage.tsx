@@ -62,6 +62,7 @@ const importMemo = (json: string) =>
     const memos = JSON.parse(json)
 
     memos.forEach((memo) => {
+      memo.quest = memo.quest.replace('荒野の観楽', '荒野の歓楽')
       const chapterInfo = Object.values(questList()).find((chapter) => {
         return chapter.name == memo.chapter
                 || chapter.name.split(/ /).pop() == memo.chapter.split(/ /).pop()
