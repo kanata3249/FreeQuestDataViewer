@@ -219,7 +219,7 @@ export const TopPage: FC = () => {
       </div>
       <DropSearchDialog open={showDropSearchDialog} itemId={300} onClose={handleDropSearchDialogResult} />
       <div className={classes.notice}>
-        クエスト・エネミーデータなど大部分は<Link className={classes.link} color="inherit" href="https://w.atwiki.jp/f_go/" target="blank">Fate/Grand Order @wiki 【FGO】</Link>を参考にさせていただいています。
+        クエスト・エネミーデータなど大部分は<Link className={classes.link} color="inherit" href="https://atlasacademy.io/" target="blank">Atlas Academy</Link>を参考にさせていただいています。
         <br />
         クエストドロップデータは<Link className={classes.link} color="inherit" href="https://sites.google.com/view/fgo-domus-aurea" target="black">FGOアイテム効率劇場</Link>のデータを使用させていただいています。
       </div>
