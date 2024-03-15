@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "get-questdata": "sh downloadQuestData.sh",
-    "gen-questdata": "node csv2questdata.js input/1_chapter.csv input/2_area.csv input/3_enemy.csv input/4_quest.csv input/5_quest_enemy.csv",
+    "get-data": "sh downloadQuestData.sh",
+    "gen-data": "node gen_questdata.js input/1_chapter.csv input/2_area.csv input/3_quest.csv",
     "gen-dropdata": "node gendropdata.js input/6_dropdata.json",
     "get-dropdata": "curl -o input/6_dropdata.json  https://docs.google.com/spreadsheets/d/1qjiymRgcpdAYv201jdzcfRSPKrNaquNRJGIRYFlaimo/gviz/tq?gid=1085791724"
   },
