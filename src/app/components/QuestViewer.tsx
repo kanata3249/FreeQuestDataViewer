@@ -8,7 +8,10 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 type Props = {
   questId: number
   questData(id: number): {
+    id: number
+    rawId: number
     chapterId: number
+    chapter: string
     name: string
     lv: number
     ap: number
@@ -20,7 +23,6 @@ type Props = {
     enemies: [
       [
         {
-          enemyId: number
           name: string
           class: string
           lv: number

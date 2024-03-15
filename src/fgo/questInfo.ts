@@ -14,6 +14,8 @@ type QuestList = {
 }
 
 type QuestData = {
+  id: number
+  rawId: number
   chapterId: number
   chapter: string
   area: string
@@ -28,7 +30,6 @@ type QuestData = {
   enemies: [
     [
       {
-        enemyId: number
         name: string
         class: string
         lv: number
@@ -62,27 +63,29 @@ export type QuestDropRates = {
 }
 
 const fgo_data = require('./quest.json')
-const fgo_quest_list: QuestList = fgo_data.quests.reduce((acc, item) => {
-  const { id, ...chapter } = item
-  acc[id] = chapter
+const fgo_quest_list: QuestList = fgo_data.quests.reduce((acc, chapter) => {
+  const quests = chapter.quests
+    .map((quest) => (
+      {
+        id: quest.id,
+        rawId: quest.rawId,
+        name: `${quest.area} ${quest.name}`
+      })
+    ).sort((a, b) => a.rawId - b.rawId)
+  acc[chapter.id] = { ...chapter, quests }
   return acc
 }, {})
-const fgo_quest_data : QuestDataMap = JSON.parse(JSON.stringify(fgo_data.questData))
-Object.values(fgo_quest_data).forEach((quest) => {
-  quest.enemies.forEach((wave) => {
-    wave.forEach((enemy) => {
-      if (fgo_data.enemyData[enemy.enemyId].name.match(/\n/)) {
-        Object.assign(enemy, fgo_data.enemyData[enemy.enemyId])
-      } else {
-        Object.assign(enemy, { ...fgo_data.enemyData[enemy.enemyId], name: enemy.name })
-      }
-    })
+console.log(fgo_quest_list)
+const fgo_quest_data: QuestDataMap = fgo_data.quests.reduce((acc, chapter) => {
+  chapter.quests.forEach((quest) => {
+    acc[quest.id] = { chapterId: chapter.id, chapter: chapter.name, ...JSON.parse(JSON.stringify(quest)) }
   })
-})
+  return acc
+}, {})
 
 const questDropList: { [id: string]: { [itemId: string]: string } } = require('./dropdata.json')
 const itemNames: { [id: string]: string } = require('./itemnames.json')
-const group = [ "", "種火", "スキル石", "銅素材", "銀素材", "金素材", "モニュメント・ピース", "", "伝承結晶" ]
+const group = ["", "種火", "スキル石", "銅素材", "銀素材", "金素材", "モニュメント・ピース", "", "伝承結晶"]
 
 export const dropItems = (): DropItem[] => {
   return Object.entries(itemNames).reduce((acc, [idString, name]) => {
@@ -94,8 +97,7 @@ export const dropItems = (): DropItem[] => {
   }, [])
 }
 
-export const questListByDropItem = (itemId: number) : QuestDropRates[] =>
-{
+export const questListByDropItem = (itemId: number): QuestDropRates[] => {
   return Object.entries(questDropList).reduce((acc, [questId, dropRates]) => {
     if (dropRates[itemId]) {
       const quest = questData(Number(questId))
@@ -106,7 +108,7 @@ export const questListByDropItem = (itemId: number) : QuestDropRates[] =>
         dropRates: Object.entries(dropRates).reduce((acc, [id, rate]) => {
           acc[Number(id)] = Number(rate)
           return acc
-        },{})
+        }, {})
       })
     }
     return acc
