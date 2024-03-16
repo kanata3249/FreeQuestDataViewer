@@ -175,9 +175,9 @@ const findQuestId = (questName) => {
     return acc.concat(chapter.quests)
   },[]).find((quest) => {
     if (questName.match(/（.*）/)) {
-      return quest.name.split(" ")[1].match(questName.replace(/^.*（(.*)）.*/, "$1"))
+      return quest.name.match(questName.replace(/^.*（(.*)）.*/, "$1"))
     } else {
-      return quest.name.split(" ")[0] == questName
+      return quest.area == questName
     }
   })
 
@@ -242,7 +242,7 @@ const results = table.rows.reduce((acc, row) => {
   }
   return acc
 },[]).filter((quest) => {
-  if (quest.sampleCount && quest.sampleCount < 100) {
+  if (quest.sampleCount && quest.sampleCount < 10) {
     console.log("filter", quest.chapter, quest.questName, quest.sampleCount)
   }
   return known_areas[quest["chapter"]]
