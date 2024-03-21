@@ -75,7 +75,6 @@ const fgo_quest_list: QuestList = fgo_data.quests.reduce((acc, chapter) => {
   acc[chapter.id] = { ...chapter, quests }
   return acc
 }, {})
-console.log(fgo_quest_list)
 const fgo_quest_data: QuestDataMap = fgo_data.quests.reduce((acc, chapter) => {
   chapter.quests.forEach((quest) => {
     acc[quest.id] = { chapterId: chapter.id, chapter: chapter.name, ...JSON.parse(JSON.stringify(quest)) }
