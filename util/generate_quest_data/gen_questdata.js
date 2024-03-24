@@ -15,7 +15,9 @@ const printable_individuality = {
     'fieldCity': '都市',
     'fieldShore': '水辺',
     'fieldForest': '森',
-    'fieldBurning': '炎上'
+    'fieldBurning': '炎上',
+    'fieldDarkness': '暗闇',
+    'fieldAir': '空中',
 }
 
 const printable_classname = {
@@ -340,8 +342,8 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
 
                             chapterInfo.quests.push(
                                 questInfos[rawId] = {
-                                    id: quest_id_map[rawId.toString()],
-                                    rawId,
+                                    id: quest_id_map[quest.id.toString()],
+                                    rawId: quest.id,
                                     area: spot.name,
                                     name: quest.name,
                                     ...questInfo,
