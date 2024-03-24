@@ -14,6 +14,9 @@ import { DropSearchDialog } from '../components/DropSearchDialog'
 
 import { questList, questData } from '../../fgo/questInfo'
 
+const STORAGE_PATH_MEMO = 'freequest/memo'
+const STORAGE_PATH_COUNTER = 'counter/0'
+
 const useStyles = makeStyles((theme: Theme) => 
   createStyles({
     toolbar: theme.mixins.toolbar,
@@ -38,30 +41,55 @@ const validatedQuestId = (questId) => {
 
 const saveMemo = (questId: number, text: string) =>
 {
-  localStorage.setItem(`memo/${questId}`, text)
+  try {
+    const memomap = JSON.parse(localStorage.getItem(STORAGE_PATH_MEMO))
+    if (text?.length > 0) {
+      memomap[questId] = text
+    } else {
+      delete memomap[questId]
+    }
+    localStorage.setItem(STORAGE_PATH_MEMO, JSON.stringify(memomap))
+  } catch (e) {
+    if (text?.length > 0) {
+      localStorage.setItem(STORAGE_PATH_MEMO, JSON.stringify({ [questId]: text }))
+    } else {
+      localStorage.setItem(STORAGE_PATH_MEMO, JSON.stringify({}))
+    }
+  }
 }
 
 const loadMemo = (questId: number) =>
 {
-  return localStorage.getItem(`memo/${questId}`) || ""
+  try {
+    const memomap = JSON.parse(localStorage.getItem(STORAGE_PATH_MEMO))
+    return memomap[questId] || ''
+  } catch (e) {
+    return ''
+  }
 }
 
 const exportMemo = () => {
-  return JSON.stringify(Object.values(questList()).reduce((acc, chapter) => {
-    chapter.quests.forEach((quest) => {
-      const memo = loadMemo(quest.id)
-      memo && acc.push( { chapter: chapter.name, quest: quest.name, memo: memo })
-    })
-    return acc
-  }, []))
+  try {
+    const memomap = JSON.parse(localStorage.getItem(STORAGE_PATH_MEMO))
+    return JSON.stringify(Object.values(questList()).reduce((acc, chapter) => {
+      chapter.quests.forEach((quest) => {
+        const text = memomap[quest.id]
+        text?.length > 0 && acc.push( { chapter: chapter.name, quest: quest.name, memo: text })
+      })
+      return acc
+    }, []))
+  } catch (e) {
+    return '[]'
+  }
 }
 
 const importMemo = (json: string) =>
 {
   try {
-    const memos = JSON.parse(json)
+    const importedMemos = JSON.parse(json)
+    const memomap = {}
 
-    memos.forEach((memo) => {
+    importedMemos.forEach((memo) => {
       memo.quest = memo.quest.replace('荒野の観楽', '荒野の歓楽')
       const chapterInfo = Object.values(questList()).find((chapter) => {
         return chapter.name == memo.chapter
@@ -71,20 +99,45 @@ const importMemo = (json: string) =>
         return quest.name == memo.quest
       })
 
-      saveMemo(questInfo.id, memo.memo)
+      if (memo.memo?.length > 0) {
+        memomap[questInfo.id] = memo.memo
+      }
     })
+    localStorage.setItem(STORAGE_PATH_MEMO, JSON.stringify(memomap))
   } catch(error) {
+  }
+}
+
+const convertOldMemo = () =>
+{
+  if (!localStorage.getItem('memo')) {
+    const result = Object.values(questList()).reduce((acc, chapter) => {
+      chapter.quests.forEach((quest) => {
+        const memo = localStorage.getItem(`memo/${quest.id}`)
+        if (memo) {
+          acc[quest.id] = memo
+        }
+      })
+      return acc
+    }, {})
+    localStorage.setItem('memo', JSON.stringify(result))
+    // remove old memos
+    Object.values(questList()).forEach((chapter) => {
+      chapter.quests.forEach((quest) => {
+        localStorage.removeItem(`memo/${quest.id}`)
+      })
+    })
   }
 }
 
 const saveCounter = (text: string) =>
 {
-  localStorage.setItem(`counter/0`, text)
+  localStorage.setItem(STORAGE_PATH_COUNTER, text)
 }
 
 const loadCounter = () =>
 {
-  return localStorage.getItem(`counter/0`)
+  return localStorage.getItem(STORAGE_PATH_COUNTER)
 }
 
 export const TopPage: FC = () => {
@@ -97,6 +150,8 @@ export const TopPage: FC = () => {
   const [ showDropSearchDialog, setShowDropSearchDialog ] = useState(false)
 
   const theme = useTheme();
+
+  convertOldMemo()
 
   const updateMemo = () => {
     setUpdateCount(updateCount + 1)
