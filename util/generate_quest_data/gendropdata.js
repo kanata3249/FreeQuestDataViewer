@@ -39,12 +39,12 @@ const known_areas = {
   "トラオム": true,
   "オーディール・コール": true,
   "ペーパームーン": true,
+  "イド": true,
 }
 
 const convertKeyName = {
   "エリア": "chapter",
   "クエスト名": "questName",
-  "Best5表はこちら, データ数": "sampleCount",
   "データ数": "sampleCount",
 
   "輝石, 剣輝": "200",
@@ -166,10 +166,25 @@ const convertKeyName = {
   "モニュ, 狂モ": "616",
 }
 
+const canonicalizedItemNames = Object.keys(convertKeyName).reduce((acc, key) => {
+  const [group, name] = key.split(/\s+/)
+  if (group && name) {
+    acc[name] = key
+  }
+  return acc
+},{})
+
 const fixQuestName = {
   '角のような岩山': '賢者の隠れ家',
   '久遠の微笑': '北大西洋エリア（久遠の微笑）',
   '光糸導く迷宮': '北大西洋エリア（光糸導く迷宮）',
+  'であいの交差点': '西新宿（であいの交差点）',
+  'たたずむ摩天楼': '西新宿（たたずむ摩天楼）',
+  'しずかな放課後': '学校（しずかな放課後）',
+  'ななふしぎ調査': '学校（ななふしぎ調査）',
+  'いのこり特訓': '学校（いのこり特訓）',
+  'とつぜんの呼び出し': '学校（とつぜんの呼び出し）',
+  '新宿御苑（イド）': '新宿御苑（バードウォッチング）',
 }
 
 const findQuestId = (questName) => {
@@ -193,34 +208,10 @@ const findQuestId = (questName) => {
   return "0"
 }
   
-const ignore_categories = {
-  "肖像": true,
-  "ランチタイム": true,
-  "肖像+ランチタイム": true,
-  "ティータイム（茶）": true
-}
-
-const ignore_prefix = {
-  "1周あたりのドロップ率（％）": true,
-  "PC用表示": true
-}
-
-let curPrefix = ""
 const columns = table.cols.map((cell, index) => {
   if (cell) {
-    const tokens = cell.label.split(/\s+/)
-    if (tokens.length > 1 && tokens[1].length) {
-      if (ignore_prefix[tokens[0]]) {
-        return `${tokens[1]}`
-      }
-      curPrefix = tokens[0]
-      return `${curPrefix}, ${tokens[1]}`
-    } else {
-      if (curPrefix.length) {
-        return `${curPrefix}, ${tokens[0]}`
-      }
-      return tokens[0]
-    }
+    const tokens = cell.label.trim().split(/\s+/)
+    return canonicalizedItemNames[tokens.slice(-1)[0]] || tokens.slice(-1)[0]
   }
   return ""
 })
