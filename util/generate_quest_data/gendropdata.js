@@ -176,15 +176,7 @@ const canonicalizedItemNames = Object.keys(convertKeyName).reduce((acc, key) => 
 
 const fixQuestName = {
   '角のような岩山': '賢者の隠れ家',
-  '久遠の微笑': '北大西洋エリア（久遠の微笑）',
-  '光糸導く迷宮': '北大西洋エリア（光糸導く迷宮）',
-  'であいの交差点': '西新宿（であいの交差点）',
-  'たたずむ摩天楼': '西新宿（たたずむ摩天楼）',
-  'しずかな放課後': '学校（しずかな放課後）',
-  'ななふしぎ調査': '学校（ななふしぎ調査）',
-  'いのこり特訓': '学校（いのこり特訓）',
-  'とつぜんの呼び出し': '学校（とつぜんの呼び出し）',
-  '新宿御苑（イド）': '新宿御苑（バードウォッチング）',
+  '内緒の待ち合わせ': 'ないしょの待ち合わせ',
 }
 
 const findQuestId = (questName) => {
@@ -194,7 +186,7 @@ const findQuestId = (questName) => {
     if (questName.match(/（.*）/)) {
       return quest.name.match(questName.replace(/^.*（(.*)）.*/, "$1"))
     } else {
-      return quest.area == questName
+      return quest.area == questName || quest.name == questName
     }
   })
 
