@@ -110,7 +110,12 @@ const importMemo = (json: string) =>
 
 const convertOldMemo = () =>
 {
-  if (!localStorage.getItem('memo')) {
+  if (!localStorage.getItem(STORAGE_PATH_MEMO)) {
+    if (localStorage.getItem('memo')) {
+      localStorage.setItem(STORAGE_PATH_MEMO, localStorage.getItem('memo'))
+      localStorage.removeItem('memo')
+      return
+    }
     const result = Object.values(questList()).reduce((acc, chapter) => {
       chapter.quests.forEach((quest) => {
         const memo = localStorage.getItem(`memo/${quest.id}`)
@@ -120,7 +125,7 @@ const convertOldMemo = () =>
       })
       return acc
     }, {})
-    localStorage.setItem('memo', JSON.stringify(result))
+    localStorage.setItem(STORAGE_PATH_MEMO, JSON.stringify(result))
     // remove old memos
     Object.values(questList()).forEach((chapter) => {
       chapter.quests.forEach((quest) => {
