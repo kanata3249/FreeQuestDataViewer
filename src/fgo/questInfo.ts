@@ -71,7 +71,7 @@ const fgo_quest_list: QuestList = fgo_data.quests.reduce((acc, chapter) => {
         rawId: quest.rawId,
         name: `${quest.area} ${quest.name}`
       })
-    ).sort((a, b) => a.rawId - b.rawId)
+    ).sort((a, b) => a.id - b.id)
   acc[chapter.id] = { ...chapter, quests }
   return acc
 }, {})
