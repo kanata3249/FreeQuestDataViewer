@@ -31,7 +31,7 @@ const tocsv = (records) => {
     }).join('\n')
 }
 
-const now = new Date() / 1000
+const nextYear = new Date() / 1000 + 60 * 60 * 24 * 365
 
 atlasdata.forEach((chapter) => {
     const chapterName = convert_chaptername(chapter.longName)
@@ -45,7 +45,7 @@ atlasdata.forEach((chapter) => {
                 spot.name = spot.spotAdds[0].targetText
             }
             spot.quests.forEach((quest) => {
-                if (quest.type == 'free' && quest.afterClear != 'close' && quest.closedAt > now) {
+                if (quest.type == 'free' && quest.afterClear != 'close' && quest.closedAt > nextYear) {
                     if (chapterNames[chapterNames.length - 1] != chapterName) {
                         chapterNames.push(chapterName)
                     }
