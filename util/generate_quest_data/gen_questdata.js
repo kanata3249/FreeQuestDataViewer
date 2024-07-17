@@ -212,6 +212,9 @@ const gen_enemy_buffs = (enemy) => {
         if (enemy.classPassive.addPassive[0].name == 'テオス・クリロノミア') {
             return '被ダメージカット-500'  // Ugh!
         }
+        if (enemy.classPassive.addPassive[0].name == '対セイバー防御脆性') {
+            return '〔セイバー〕からの被ダメージ属性相性500%'  // Ugh!
+        }
     }
     return ''
 }
@@ -324,8 +327,11 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
                             }
 
                             const { enemies, rawId, ...questInfo } = load_quest_info(quest.id, quest.phasesWithEnemies.slice(-1)[0])
+                            if (!enemies) {
+                                console.log('no quest info found, ', quest.id, chapterInfo.name, spot.name)
+                            }
 
-                            const enemies2 = enemies.reduce((acc, enemy) => {
+                            const enemies2 = enemies?.reduce((acc, enemy) => {
                                 const { wave, pos, questId, type, name, attribute, characteristics, DR, ...enemyInfo } = enemy
                                 if (acc.length < wave) {
                                     acc.push([])
