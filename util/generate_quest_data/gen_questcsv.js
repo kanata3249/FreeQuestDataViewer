@@ -52,7 +52,7 @@ atlasdata.forEach((chapter) => {
                     if (areaNames[areaNames.length - 1]?.name != spot.name) {
                         areaNames.push({chapter: chapterName, name: spot.name})
                     }
-                    check_quest_info(quest.id, quest.phasesWithEnemies.slice(-1)[0])
+                    check_quest_info(quest.id, [ ...quest.phases, ...quest.phasesWithEnemies].slice(-1)[0])
 
                     questInfos.push({
                         quest: freeQuestIndex++,

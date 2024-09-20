@@ -168,7 +168,8 @@ const gen_quest_level = (recommendLv) => {
     const over90 = {
         '90+': 91,
         '90++': 92,
-        '90★': 93
+        '90★': 93,
+        '90★★': 94
     }
     return over90[recommendLv] || parseInt(recommendLv)
 }
@@ -209,12 +210,16 @@ const gen_enemy_traits = (enemy) => {
 
 const gen_enemy_buffs = (enemy) => {
     if (enemy.classPassive.addPassive.length > 0) {
-        if (enemy.classPassive.addPassive[0].name == 'テオス・クリロノミア') {
-            return '被ダメージカット-500'  // Ugh!
-        }
-        if (enemy.classPassive.addPassive[0].name == '対セイバー防御脆性') {
-            return '〔セイバー〕からの被ダメージ属性相性500%'  // Ugh!
-        }
+        return enemy.classPassive.addPassive.reduce((acc, addPassive) => {
+            if (addPassive.name == 'テオス・クリロノミア') {
+                acc.push('被ダメージカット-500')  // Ugh!
+            }
+            const defenceWeakness = addPassive.name.match('^対(.*)防御脆性$')
+            if (defenceWeakness) {
+                acc.push(`〔${defenceWeakness[1]}〕からの被ダメージ属性相性500%`)  // Ugh!
+            }
+            return acc
+        },[])
     }
     return ''
 }
@@ -326,7 +331,7 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
                                 questData.quests.push(chapterInfo)
                             }
 
-                            const { enemies, rawId, ...questInfo } = load_quest_info(quest.id, quest.phasesWithEnemies.slice(-1)[0])
+                            const { enemies, rawId, ...questInfo } = load_quest_info(quest.id, [ ...quest.phases, ...quest.phasesWithEnemies].slice(-1)[0])
                             if (!enemies) {
                                 console.log('no quest info found, ', quest.id, chapterInfo.name, spot.name)
                             }
