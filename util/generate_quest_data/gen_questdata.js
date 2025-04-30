@@ -18,6 +18,7 @@ const printable_individuality = {
     'fieldBurning': '炎上',
     'fieldDarkness': '暗闇',
     'fieldAir': '空中',
+    "milleniumCastle": "千年城",
 }
 
 const printable_classname = {

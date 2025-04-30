@@ -40,6 +40,7 @@ const known_areas = {
   "オーディール・コール": true,
   "ペーパームーン": true,
   "イド": true,
+  "アーキタイプ": true,
 }
 
 const convertKeyName = {
