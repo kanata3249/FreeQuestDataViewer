@@ -41,6 +41,7 @@ const known_areas = {
   "ペーパームーン": true,
   "イド": true,
   "アーキタイプ": true,
+  "トリニティ": true,
 }
 
 const convertKeyName = {
