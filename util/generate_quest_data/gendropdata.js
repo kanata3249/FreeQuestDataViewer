@@ -42,6 +42,7 @@ const known_areas = {
   "イド": true,
   "アーキタイプ": true,
   "トリニティ": true,
+  "冠位研鑽戦": true,
 }
 
 const convertKeyName = {
@@ -202,6 +203,9 @@ const findQuestId = (questName) => {
   }
   if (fixQuestName[questName]) {
     return findQuestId(fixQuestName[questName])
+  }
+  if (questName.startsWith('〔')) {
+    return findQuestId(`冠位研鑽戦${questName}`)
   }
   console.log("unknown quest name", questName)
   return "0"
