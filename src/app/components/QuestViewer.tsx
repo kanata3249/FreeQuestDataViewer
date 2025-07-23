@@ -93,8 +93,16 @@ const useStyles = makeStyles((theme: Theme) => (
 const aliasForLv = {
   91: '90+',
   92: '90++',
-  93: '90★',
-  94: '90★★'
+  93: '90+++',
+  94: '90★',
+  95: '90★★',
+  96: '90★★★',
+  101: '100+',
+  102: '100++',
+  103: '100+++',
+  104: '100★',
+  105: '100★★',
+  106: '100★★★'
 }
 const formatLv = (value: number) => aliasForLv[value] || value
 const formatNumber = (value: number) => Number(value).toLocaleString().padStart(6 + 1, String.fromCharCode(0xa0))

@@ -1,13 +1,25 @@
 const fs = require('fs')
 const csv = require('csvtojson')
 
-
 const atlasdata = require('./atlas/0_nice_war.json')
 
+const grandTrainingBattle = '冠位戴冠戦'
+
 const convert_chaptername = (longName) => {
-    return longName.split(/\n/).map((line, index) =>
-        index ? line.split(/ /).splice(-1) : line
-    ).join(" ")
+    const lines = longName.split(/\n/)
+    const titles = lines.reduce((acc, line) => {
+        acc.push(line.split(/ /))
+        return acc
+    },[])
+
+    if (titles[1]) {
+        return `${titles[0].join(' ')} ${titles[1].splice(-1)}`
+    } else {
+        if (titles[0][1])
+            return `${titles[0][0]} ${titles[0].splice(-1)}`
+        else
+            return titles[0][0]
+    }
 }
 
 const printable_individuality = {
@@ -165,14 +177,40 @@ const convert_individuality = (individualities) => {
     }, []).join(' ')
 }
 
-const gen_quest_level = (recommendLv) => {
+const questLevelAndBondTemplate = {
+  "100★★★": 4748,
+  "100★★": 4438,
+  "100★": 4147,
+  "100+++": 3876,
+  "100++": 3622,
+  "100+": 3385,
+  "100": 3164,
+  "90★★★": 4557,
+  "90★★": 3797,
+  "90★": 3164,
+  "90++": 2636,
+  "90++": 1318,
+  "90+": 1098
+}
+
+const gen_quest_level = (recommendLv, bond) => {
+    const lvByBond = (Object.entries(questLevelAndBondTemplate).find((lv) => lv[1] == bond) || [ recommendLv, bond ])[0]
     const over90 = {
         '90+': 91,
         '90++': 92,
-        '90★': 93,
-        '90★★': 94
+        '90+++': 93,
+        '90★': 94,
+        '90★★': 95,
+        '90★★★': 96,
+        '100': 100,
+        '100+': 101,
+        '100++': 102,
+        '100+++': 103,
+        '100★': 104,
+        '100★★': 105,
+        '100★★★': 106,
     }
-    return over90[recommendLv] || parseInt(recommendLv)
+    return over90[lvByBond] || parseInt(recommendLv)
 }
 
 const gen_enemy_type = (enemy) => {
@@ -259,7 +297,7 @@ const load_quest_info = (questId, phase) => {
     }
 
     return {
-        lv: gen_quest_level(questInfo.recommendLv),
+        lv: gen_quest_level(questInfo.recommendLv, questInfo.bond),
         ap: questInfo.consume,
         bond: questInfo.bond,
         exp: questInfo.exp,
@@ -309,8 +347,11 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
         }, {})
 
         atlasdata.forEach((chapter) => {
-            const chapterName = convert_chaptername(chapter.longName)
-            if (chapter.flags.findIndex((flag) => flag == 'mainScenario') >= 0) {
+            const convertedChapterName = convert_chaptername(chapter.longName)
+            const isGrandTrainingBattle = convertedChapterName.startsWith(grandTrainingBattle)
+            const chapterName = isGrandTrainingBattle ? convertedChapterName.split(' ')[0] : convertedChapterName
+            if (chapter.flags.findIndex((flag) => flag == 'mainScenario') >= 0
+                || chapter.name.startsWith(grandTrainingBattle)) {
                 const chapterInfo = {
                     id: chapter_map[chapterName],
                     name: chapterName,
@@ -325,11 +366,17 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
                     if (spot.spotAdds.length > 0 && spot.spotAdds[0].overrideType == 'name') {
                         spot.name = spot.spotAdds[0].targetText
                     }
+                    if (isGrandTrainingBattle) {
+                        spot.name = convertedChapterName.split(' ')[1]
+                    }
                     spot.quests.forEach((quest) => {
-                        if (quest.type == 'free' && quest.afterClear != 'close' && quest.closedAt > nextYear) {
+                        if ((quest.type == 'free' || (quest.type == 'event' && isGrandTrainingBattle))
+                             && quest.afterClear != 'close' && quest.closedAt > nextYear) {
                             if (chapterNames[chapterNames.length - 1] != chapterName) {
                                 chapterNames.push(chapterName)
                                 questData.quests.push(chapterInfo)
+                            } else {
+                                chapterInfo.quests = questData.quests[questData.quests.length - 1].quests
                             }
 
                             const { enemies, rawId, ...questInfo } = load_quest_info(quest.id, [ ...quest.phases, ...quest.phasesWithEnemies].slice(-1)[0])

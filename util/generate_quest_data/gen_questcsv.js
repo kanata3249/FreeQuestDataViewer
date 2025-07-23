@@ -7,10 +7,23 @@ const areaNames = []
 const questInfos = []
 const missingQuestInfos = []
 
+const grandTrainingBattle = '冠位戴冠戦'
+
 const convert_chaptername = (longName) => {
-    return longName.split(/\n/).map((line, index) =>
-        index ? line.split(/ /).splice(-1) : line
-    ).join(" ")
+    const lines = longName.split(/\n/)
+    const titles = lines.reduce((acc, line) => {
+        acc.push(line.split(/ /))
+        return acc
+    },[])
+
+    if (titles[1]) {
+        return `${titles[0].join(' ')} ${titles[1].splice(-1)}`
+    } else {
+        if (titles[0][1])
+            return `${titles[0][0]} ${titles[0].splice(-1)}`
+        else
+            return titles[0][0]
+    }
 }
 
 const check_quest_info = (questId, phase) => {
@@ -34,8 +47,11 @@ const tocsv = (records) => {
 const nextYear = new Date() / 1000 + 60 * 60 * 24 * 365
 
 atlasdata.forEach((chapter) => {
-    const chapterName = convert_chaptername(chapter.longName)
-    if (chapter.flags.findIndex((flag) => flag == 'mainScenario') >= 0) {
+    if (chapter.flags.findIndex((flag) => flag == 'mainScenario') >= 0
+        || chapter.name.startsWith('冠位戴冠戦')) {
+        const convertedChapterName = convert_chaptername(chapter.longName)
+        const isGrandTrainingBattle = convertedChapterName.startsWith(grandTrainingBattle)
+        const chapterName = isGrandTrainingBattle ? convertedChapterName.split(' ')[0] : convertedChapterName
         chapter.spots.forEach((spot) => {
             var freeQuestIndex = 0
             if (spot.name == '代々木ニ丁目') {
@@ -44,8 +60,11 @@ atlasdata.forEach((chapter) => {
             if (spot.spotAdds.length > 0 && spot.spotAdds[0].overrideType == 'name') {
                 spot.name = spot.spotAdds[0].targetText
             }
+            if (isGrandTrainingBattle) {
+                spot.name = convertedChapterName.split(' ')[1]
+            }
             spot.quests.forEach((quest) => {
-                if (quest.type == 'free' && quest.afterClear != 'close' && quest.closedAt > nextYear) {
+                if ((quest.type == 'free' || quest.type == 'event') && quest.afterClear != 'close' && quest.closedAt > nextYear) {
                     if (chapterNames[chapterNames.length - 1] != chapterName) {
                         chapterNames.push(chapterName)
                     }
