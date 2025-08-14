@@ -100,15 +100,19 @@ export const questListByDropItem = (itemId: number): QuestDropRates[] => {
   return Object.entries(questDropList).reduce((acc, [questId, dropRates]) => {
     if (dropRates[itemId]) {
       const quest = questData(Number(questId))
-      acc.push({
-        id: Number(questId),
-        chapter: quest.chapter,
-        name: `${quest.area} ${quest.name}`,
-        dropRates: Object.entries(dropRates).reduce((acc, [id, rate]) => {
-          acc[Number(id)] = Number(rate)
-          return acc
-        }, {})
-      })
+      if (quest) {
+        acc.push({
+          id: Number(questId),
+          chapter: quest.chapter,
+          name: `${quest.area} ${quest.name}`,
+          dropRates: Object.entries(dropRates).reduce((acc, [id, rate]) => {
+            acc[Number(id)] = Number(rate)
+            return acc
+          }, {})
+        })
+      } else {
+        console.log(`cant find quest data ${itemId} ${questId}`)
+      }
     }
     return acc
   }, [])
