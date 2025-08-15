@@ -5,9 +5,12 @@
   "license": "MIT",
   "scripts": {
     "get-data": "sh downloadQuestData.sh",
-    "gen-data": "node gen_questdata.js input/1_chapter.csv input/2_area.csv input/3_quest.csv",
+    "gen-data": "node genquestdata.js input/1_chapter.csv input/2_area.csv input/3_quest.csv",
+    "apply-data": "cp quest.json ../../src/fgo",
+    "gen-csv": "node genquestcsv.js",
     "gen-dropdata": "node gendropdata.js input/6_dropdata.json",
-    "get-dropdata": "curl -o input/6_dropdata.json  https://docs.google.com/spreadsheets/d/1qjiymRgcpdAYv201jdzcfRSPKrNaquNRJGIRYFlaimo/gviz/tq?gid=1085791724"
+    "get-dropdata": "curl -o input/6_dropdata.json  https://docs.google.com/spreadsheets/d/1qjiymRgcpdAYv201jdzcfRSPKrNaquNRJGIRYFlaimo/gviz/tq?gid=1085791724",
+    "apply-dropdata": "cp dropdata.json ../../src/fgo"
   },
   "devDependencies": {
     "csvtojson": "^2.0.10"
