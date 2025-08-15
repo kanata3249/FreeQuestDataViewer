@@ -349,7 +349,7 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
         atlasdata.forEach((chapter) => {
             const convertedChapterName = convert_chaptername(chapter.longName)
             const isGrandTrainingBattle = convertedChapterName.startsWith(grandTrainingBattle)
-            const chapterName = isGrandTrainingBattle ? convertedChapterName.split(' ')[0] : convertedChapterName
+            const chapterName = convertedChapterName
             if (chapter.flags.findIndex((flag) => flag == 'mainScenario') >= 0
                 || chapter.name.startsWith(grandTrainingBattle)) {
                 const chapterInfo = {
@@ -365,9 +365,6 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
                     }
                     if (spot.spotAdds.length > 0 && spot.spotAdds[0].overrideType == 'name') {
                         spot.name = spot.spotAdds[0].targetText
-                    }
-                    if (isGrandTrainingBattle) {
-                        spot.name = convertedChapterName.split(' ')[1]
                     }
                     spot.quests.forEach((quest) => {
                         if ((quest.type == 'free' || (quest.type == 'event' && isGrandTrainingBattle))
