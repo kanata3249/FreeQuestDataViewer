@@ -27,9 +27,14 @@ const convert_chaptername = (longName) => {
 }
 
 const check_quest_info = (questId, phase) => {
-    try {
-        JSON.parse(fs.readFileSync(`./atlas/quests/${questId}-${phase}.json`))
-    } catch (e) {
+    const try_load = (questId, phase) => {
+        try {
+            return JSON.parse(fs.readFileSync(`./atlas/quests/${questId}-${phase}.json`))
+        } catch (e) {
+            return null
+        }
+    }
+    if (!try_load(questId, phase)?.stages[0]?.enemies.length) {
         missingQuestInfos.push(`curl -s -o ./atlas/quests/${questId}-${phase}.json https://api.atlasacademy.io/nice/JP/quest/${questId}/${phase}`)
     }
 }

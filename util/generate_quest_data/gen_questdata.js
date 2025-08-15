@@ -377,8 +377,8 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
                             }
 
                             const { enemies, rawId, ...questInfo } = load_quest_info(quest.id, [ ...quest.phases, ...quest.phasesWithEnemies].slice(-1)[0])
-                            if (!enemies) {
-                                console.log('no quest info found, ', quest.id, chapterInfo.name, spot.name)
+                            if (!enemies || enemies.length == 0) {
+                                console.log('no quest info found, ', quest.id, chapterInfo.name, spot.name, quest.name)
                             }
 
                             const enemies2 = enemies?.reduce((acc, enemy) => {
