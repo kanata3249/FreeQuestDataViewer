@@ -8,5 +8,5 @@ yarn gen-dropdata
 yarn get-dropdata
 node diff-dropdata.js 0.1 \
   && echo dropdata updated \
-  && yarn applky-dropdata
+  && yarn apply-dropdata
 
