@@ -194,7 +194,6 @@ const questLevelAndBondTemplate = {
 }
 
 const gen_quest_level = (recommendLv, bond) => {
-    const lvByBond = (Object.entries(questLevelAndBondTemplate).find((lv) => lv[1] == bond) || [ recommendLv, bond ])[0]
     const over90 = {
         '90+': 91,
         '90++': 92,
@@ -210,7 +209,7 @@ const gen_quest_level = (recommendLv, bond) => {
         '100★★': 105,
         '100★★★': 106,
     }
-    return over90[lvByBond] || parseInt(recommendLv)
+    return over90[recommendLv] || parseInt(recommendLv)
 }
 
 const gen_enemy_type = (enemy) => {
