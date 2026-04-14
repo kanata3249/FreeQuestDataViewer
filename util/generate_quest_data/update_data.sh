@@ -1,12 +1,12 @@
 #!/bin/sh
 
-yarn get-data
-yarn gen-data
-yarn apply-data
+pnpm get-data
+pnpm gen-data
+pnpm apply-data
 
-yarn gen-dropdata
-yarn get-dropdata
+pnpm gen-dropdata
+pnpm get-dropdata
 node diff-dropdata.js 0.1 \
   && echo dropdata updated \
-  && yarn apply-dropdata
+  && pnpm apply-dropdata
 
