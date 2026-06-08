@@ -4,9 +4,13 @@ const csv = require('csvtojson')
 const atlasdata = require('./atlas/0_nice_war.json')
 
 const grandTrainingBattle = '冠位戴冠戦'
+const fixedLongName = {
+    '？？？編 郷愁永巡刻盤 パスト・カルデア': '運命の三女神編 郷愁永巡刻盤 パスト・カルデア'
+}
 
 const convert_chaptername = (longName) => {
-    const lines = longName.split(/\n/)
+    const fixedName = fixedLongName[longName] || longName
+    const lines = fixedName.split(/\n/)
     const titles = lines.reduce((acc, line) => {
         acc.push(line.split(/ /))
         return acc
@@ -349,6 +353,7 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
             const convertedChapterName = convert_chaptername(chapter.longName)
             const isGrandTrainingBattle = convertedChapterName.startsWith(grandTrainingBattle)
             const chapterName = convertedChapterName
+
             if (chapter.flags.findIndex((flag) => flag == 'mainScenario') >= 0
                 || chapter.name.startsWith(grandTrainingBattle)) {
                 const chapterInfo = {
@@ -394,7 +399,6 @@ Promise.all([csv2json(csvs[0]), csv2json(csvs[1]), csv2json(csvs[2])])
                                 })
                                 return acc
                             }, [])
-
                             chapterInfo.quests.push(
                                 questInfos[rawId] = {
                                     id: quest_id_map[quest.id.toString()],
