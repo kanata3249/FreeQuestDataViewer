@@ -85,6 +85,7 @@ export const DropSearchDialog: FC<Prop> = (props) => {
         </DialogTitle>
         <DialogActions>
           <Select
+            variant="standard"
             value={dropItem.id.toString()}
             onChange={handleSearchItemChanged}
             native

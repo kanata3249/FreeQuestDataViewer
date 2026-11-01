@@ -49,17 +49,17 @@ export const DropCounter: FC<Props> = (props) => {
     <Grid container sx={{ flexDirection: "column", m: 0.25, width: 70 }}>
       {props.label ? <Grid style={{textAlign: "center"}}>{props.label}</Grid> : <></>}
       <Grid>
-        <TextField label={props.noTextLabel ? " " : "開始値"} onChange={handleStartChanged} value={start}
+        <TextField variant="standard" label={props.noTextLabel ? " " : "開始値"} onChange={handleStartChanged} value={start}
          slotProps={{ htmlInput: { maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}}} type="number" size="small"
          onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
       </Grid>
       <Grid>
-        <TextField label={props.noTextLabel ? " " : "現在値"} onChange={handleCurrentChanged} value={current}
+        <TextField variant="standard" label={props.noTextLabel ? " " : "現在値"} onChange={handleCurrentChanged} value={current}
          slotProps={{ htmlInput: { maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}}} type="number" size="small"
          onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
       </Grid>
       <Grid>
-        <TextField label={props.noTextLabel ? " " : "レート"} value={dropRate(current - start, props.divider)}
+        <TextField variant="standard" label={props.noTextLabel ? " " : "レート"} value={dropRate(current - start, props.divider)}
          slotProps={{ htmlInput: {tabIndex: -1, maxLength: 4, style: { textAlign: "right", paddingRight: 5 }}}} size="small" />
       </Grid>
     </Grid>

@@ -44,14 +44,14 @@ export const QuestSelector: FC<Props> = (props) => {
     <div style={{ boxSizing: "border-box", width: "100%" }}>
       <FormControl sx={{ m: 1, minWidth: isSP ? "95%" : 280 }}>
         <InputLabel>Chapter</InputLabel>
-        <Select value={chapterId.toString()} onChange={handleChapterChange}>
+        <Select variant="standard" value={chapterId.toString()} onChange={handleChapterChange}>
           {Object.keys(props.quests).map((chapterId) =>
             <MenuItem key={chapterId} value={chapterId}>{props.quests[chapterId].name}</MenuItem>)}
         </Select>
       </FormControl>
       <FormControl sx={{ m: 1, minWidth: isSP ? "95%" : 280 }}>
         <InputLabel>Quests</InputLabel>
-        <Select value={questId.toString()} onChange={handleQuestChange}>
+        <Select variant="standard" value={questId.toString()} onChange={handleQuestChange}>
           {props.quests[chapterId].quests.map((quest) =>
             <MenuItem key={quest.id} value={quest.id}>{quest.name}</MenuItem>)}
         </Select>
