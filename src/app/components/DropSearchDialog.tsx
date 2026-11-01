@@ -115,10 +115,10 @@ export const DropSearchDialog: FC<Prop> = (props) => {
           <FormControlLabel control={<Checkbox size="small" color="default" checked={useTotalDropRate} onChange={(e) => setUseTotalDropRate(e.target.checked)} />} label="ドロップ率合算" />
         </DialogActions>
         <DialogContent sx={{ px: 0.75 }}>
-          <List dense component="nav" aria-label="main mailbox folders" >
+          <List dense component="nav" aria-label="quest list" sx={{ width: "100%" }}>
             {questList.map((quest, questIndex) => (
-              <ListItem key={questIndex} onClick={(e) => handleClickQuest(questIndex)} sx={{ px: 0.25, fontSize: "smalller" }}>
-                <Grid container sx={{ flexDirection: "column" }}>
+              <ListItem key={questIndex} onClick={(e) => handleClickQuest(questIndex)} sx={{ display: "block", width: "100%", px: 0.25, fontSize: "smalller" }}>
+                <Grid container sx={{ flexDirection: "column", width: "100%", minWidth: 0 }}>
                   <Grid>
                     <Grid container>
                       <ListItemText style={{flexGrow: 1}} primary={quest.name}/>
