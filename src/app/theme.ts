@@ -4,12 +4,16 @@ import * as colors from '@mui/material/colors'
 const isDarkMode = () => matchMedia('(prefers-color-scheme: dark)').matches
 
 export const appTheme = () => {
+  const mode = isDarkMode() ? "dark" : "light"
   const theme = createTheme({
     palette: {
       primary: {
         main: colors.blue[800],
       },
-      mode: isDarkMode() ? "dark" : "light",
+      mode,
+      background: {
+        default: mode === "dark" ? "#303030" : "#fff",
+      },
     },
   })
 

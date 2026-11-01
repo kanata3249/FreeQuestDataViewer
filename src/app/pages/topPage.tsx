@@ -235,7 +235,7 @@ export const TopPage: FC = () => {
   return (
     <>
       <Box sx={theme.mixins.toolbar}>
-        <AppBar>
+        <AppBar enableColorOnDark>
           <Toolbar>
             <IconButton edge="start" aria-label="menu" aria-controls="main-menu" onClick={handleMenuClick}>
               <MenuIcon />
