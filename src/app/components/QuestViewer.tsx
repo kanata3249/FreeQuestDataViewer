@@ -1,9 +1,7 @@
 import React, { FC } from 'react'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { useTheme } from '@material-ui/core/styles'
 import { isMobile } from 'react-device-detect'
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core'
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 
 type Props = {
   questId: number
@@ -37,58 +35,22 @@ type Props = {
   }
 }
 
-const useStyles = makeStyles((theme: Theme) => (
-  createStyles({
-    head: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-      fontSize: 14,
-      padding: 4,
-      paddingRight: 10,
-      paddingLeft: 10
-    },
-    body: {
-      fontSize: 14,
-      padding: 4,
-      paddingRight: 10,
-      paddingLeft: 10,
-      border: 0
-    },
-    body2nd: {
-      fontSize: 11,
-      padding: 4,
-      paddingRight: 10,
-      paddingLeft: 10,
-      border: 0
-    },
-    bodyOdd: {
-      backgroundColor: theme.palette.action.hover,
-      fontSize: 14,
-      padding: 4,
-      paddingRight: 10,
-      paddingLeft: 10,
-      border: 0
-    },
-    body2ndOdd: {
-      backgroundColor: theme.palette.action.hover,
-      fontSize: 11,
-      padding: 4,
-      paddingRight: 10,
-      paddingLeft: 10,
-      border: 0
-    },
-    container: {
-      boxSizing: "border-box",
-      width: "100%",
-      padding: 6
-    },
-    waveTitle: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-      marginBottom: 0
-    }
-  }))
-)
+const headCellSx = {
+  backgroundColor: 'common.black',
+  color: 'common.white',
+  fontSize: 14,
+  p: 0.5,
+  px: 1.25,
+}
+const bodyCellSx = {
+  fontSize: 14,
+  p: 0.5,
+  px: 1.25,
+  border: 0,
+}
+const secondaryBodyCellSx = { ...bodyCellSx, fontSize: 11 }
+const oddBodyCellSx = { ...bodyCellSx, backgroundColor: 'action.hover' }
+const oddSecondaryBodyCellSx = { ...secondaryBodyCellSx, backgroundColor: 'action.hover' }
 
 const aliasForLv = {
   91: '90+',
@@ -151,7 +113,6 @@ const enemyInfoTableColumnsSP : TableColumnInfo[][] = [
 ]
 
 export const QuestViewer: FC<Props> = (props) => {
-  const classes = useStyles();
   const questData = props.questData(props.questId)
 
   if (!questData) {
@@ -159,25 +120,24 @@ export const QuestViewer: FC<Props> = (props) => {
       <></>
     )
   }
-  const theme = useTheme();
   const enemyInfoTableColumns = isMobile ? enemyInfoTableColumnsSP : enemyInfoTableColumnsPC
-  const cellClassNames = [[ classes.body, classes.body2nd ], [classes.bodyOdd, classes.body2ndOdd ]]
+  const cellSx = [[bodyCellSx, secondaryBodyCellSx], [oddBodyCellSx, oddSecondaryBodyCellSx]]
 
   return (
-    <div className={classes.container}>
+    <div style={{ boxSizing: "border-box", width: "100%", padding: 6 }}>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow key="label">
               {questInfoTableColumns.map((column, idx) =>
-                <TableCell className={classes.head} key={idx} width={column.width}>{column.label}</TableCell>
+                <TableCell sx={headCellSx} key={idx} width={column.width}>{column.label}</TableCell>
               )}
             </TableRow>
           </TableHead>
           <TableBody>
             <TableRow key={props.questId}>
               {questInfoTableColumns.map((column) =>
-                <TableCell className={classes.body} key={column.key} align={column.align} width={column.width}>
+                <TableCell sx={bodyCellSx} key={column.key} align={column.align} width={column.width}>
                   {column.formatter ? column.formatter(questData[column.key]) : questData[column.key]}
                 </TableCell>
               )}
@@ -193,7 +153,7 @@ export const QuestViewer: FC<Props> = (props) => {
               {enemyInfoTableColumns.map((row, rowIdx) =>
                 <TableRow key={`label-${rowIdx}`}>
                   {row.map((column) =>
-                    <TableCell className={classes.head} key={column.label} width={column.width} colSpan={column.span ? column.span : 1}>{column.label}</TableCell>
+                    <TableCell sx={headCellSx} key={column.label} width={column.width} colSpan={column.span ? column.span : 1}>{column.label}</TableCell>
                   )}
                 </TableRow>
               )}
@@ -202,14 +162,14 @@ export const QuestViewer: FC<Props> = (props) => {
         }
         {questData.enemies.map( (wave, waveNo) => (
           <div key={`div-${waveNo}`}>
-          <p className={classes.waveTitle}>w{waveNo + 1}</p>
+          <Box component="p" sx={{ backgroundColor: 'common.black', color: 'common.white', mb: 0 }}>w{waveNo + 1}</Box>
           <Table>
             <TableBody>
               {wave.map( (enemy, enemyNo) => (
                 enemyInfoTableColumns.map((row, rowNo) =>
                   <TableRow key={`${waveNo}-${enemyNo}-${rowNo}`}>
                     {row.map((column, columnNo) =>
-                      <TableCell className={cellClassNames[enemyNo % 2][rowNo == 0 ? 0 : 1]} key={`${waveNo}-${enemyNo}-${columnNo}`} align={column.align} width={column.width} colSpan={column.span ? column.span : 1}>
+                      <TableCell sx={cellSx[enemyNo % 2][rowNo == 0 ? 0 : 1]} key={`${waveNo}-${enemyNo}-${columnNo}`} align={column.align} width={column.width} colSpan={column.span ? column.span : 1}>
                         {column.formatter ? column.formatter(enemy[column.key]) : enemy[column.key]}
                       </TableCell>
                     )}
@@ -222,18 +182,18 @@ export const QuestViewer: FC<Props> = (props) => {
         ))}
         <Table>
           <TableHead>
-            <TableRow><TableCell className={classes.head}>ドロップ率(参考)</TableCell></TableRow>
+            <TableRow><TableCell sx={headCellSx}>ドロップ率(参考)</TableCell></TableRow>
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell className={classes.body}>
+              <TableCell sx={bodyCellSx}>
                 {questData.drop
                   .filter((drop) => drop.group.match("素材"))
                   .map((drop) => `${drop.name}: ${drop.rate}%`).join(" ")}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell className={classes.body}>
+              <TableCell sx={bodyCellSx}>
                 {questData.drop
                   .filter((drop) => drop.group == "スキル石")
                   .map((drop) => `${drop.name}: ${drop.rate}%`).join(" ")}
@@ -241,7 +201,7 @@ export const QuestViewer: FC<Props> = (props) => {
             </TableRow>
             {questData.drop.find((drop) => drop.group == "モニュメント・ピース") &&
               <TableRow>
-                <TableCell className={classes.body}>
+                <TableCell sx={bodyCellSx}>
                   {questData.drop
                     .filter((drop) => drop.group == "モニュメント・ピース")
                     .map((drop) => `${drop.name}: ${drop.rate}%`).join(" ")}
@@ -250,7 +210,7 @@ export const QuestViewer: FC<Props> = (props) => {
             }
             {questData.drop.find((drop) => drop.group == "種火") &&
               <TableRow>
-                <TableCell className={classes.body}>
+                <TableCell sx={bodyCellSx}>
                   {questData.drop
                     .filter((drop) => drop.group == "種火")
                     .map((drop) => `${drop.name}: ${drop.rate}%`).join(" ")}

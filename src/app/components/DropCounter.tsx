@@ -1,8 +1,6 @@
 import React, { FC, useState } from 'react'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { useTheme } from '@material-ui/core/styles'
 
-import { Grid, TextField } from '@material-ui/core'
+import { Grid, TextField } from '@mui/material'
 
 type DropCount = {
   start: number
@@ -19,21 +17,7 @@ type Props = {
   noTextLabel: boolean
 }
 
-const useStyles = makeStyles((theme: Theme) => (
-  createStyles({
-    container: {
-      margin: 2,
-      width: 70
-    },
-    textField: {
-    }
-  }))
-)
-
 export const DropCounter: FC<Props> = (props) => {
-  const classes = useStyles()
-  const theme = useTheme()
-
   const [ start, setStart ] = useState(props.dropCount.start)
   const [ current, setCurrent ] = useState(props.dropCount.current)
 
@@ -62,21 +46,21 @@ export const DropCounter: FC<Props> = (props) => {
   }
 
   return (
-    <Grid container direction="column" className={classes.container}>
-      {props.label ? <Grid item style={{textAlign: "center"}}>{props.label}</Grid> : <></>}
-      <Grid item>
+    <Grid container sx={{ flexDirection: "column", m: 0.25, width: 70 }}>
+      {props.label ? <Grid style={{textAlign: "center"}}>{props.label}</Grid> : <></>}
+      <Grid>
         <TextField label={props.noTextLabel ? " " : "開始値"} onChange={handleStartChanged} value={start}
-         inputProps={{ maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}} type="number" size="small"
+         slotProps={{ htmlInput: { maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}}} type="number" size="small"
          onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
       </Grid>
-      <Grid item>
+      <Grid>
         <TextField label={props.noTextLabel ? " " : "現在値"} onChange={handleCurrentChanged} value={current}
-         inputProps={{ maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}} type="number" size="small"
+         slotProps={{ htmlInput: { maxLength: 4, min: 0, style: { textAlign: "right", paddingRight: 5 }}}} type="number" size="small"
          onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
       </Grid>
-      <Grid item>
+      <Grid>
         <TextField label={props.noTextLabel ? " " : "レート"} value={dropRate(current - start, props.divider)}
-         inputProps={{tabIndex: -1, maxLength: 4, style: { textAlign: "right", paddingRight: 5 }}} size="small" />
+         slotProps={{ htmlInput: {tabIndex: -1, maxLength: 4, style: { textAlign: "right", paddingRight: 5 }}}} size="small" />
       </Grid>
     </Grid>
   )

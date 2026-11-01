@@ -1,10 +1,9 @@
 import React, { FC, useState } from 'react'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { useTheme } from '@material-ui/core/styles'
+import { useTheme } from '@mui/material/styles'
 import { isMobile } from 'react-device-detect'
 
-import { AppBar, Menu, MenuItem, Toolbar, IconButton, Typography, Link, Divider } from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Menu'
+import { AppBar, Menu, MenuItem, Toolbar, IconButton, Typography, Link, Divider, Box } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
 
 import { QuestSelector } from '../components/QuestSelector'
 import { QuestViewer } from '../components/QuestViewer'
@@ -16,20 +15,6 @@ import { questList, questData } from '../../fgo/questInfo'
 
 const STORAGE_PATH_MEMO = 'freequest/memo'
 const STORAGE_PATH_COUNTER = 'counter/0'
-
-const useStyles = makeStyles((theme: Theme) => 
-  createStyles({
-    toolbar: theme.mixins.toolbar,
-    contents: {
-      maxWidth: 1000
-    },
-    notice: {
-      marginLeft: 10,
-    },
-    link: {
-      color: theme.palette.info.main
-    }
-  }))
 
 const validatedQuestId = (questId) => {
   const quests = questList()
@@ -146,7 +131,6 @@ const loadCounter = () =>
 }
 
 export const TopPage: FC = () => {
-  const classes = useStyles()
   const [ questId, setQuestId ] = useState(validatedQuestId(parseInt(localStorage.getItem('questId'))))
   const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null)
   const [ updateCount, setUpdateCount ] = useState(0)
@@ -250,7 +234,7 @@ export const TopPage: FC = () => {
 
   return (
     <>
-      <div className={classes.toolbar}>
+      <Box sx={theme.mixins.toolbar}>
         <AppBar>
           <Toolbar>
             <IconButton edge="start" aria-label="menu" aria-controls="main-menu" onClick={handleMenuClick}>
@@ -270,18 +254,18 @@ export const TopPage: FC = () => {
             </Typography>
           </Toolbar>
         </AppBar>
-      </div>
-      <div className={classes.contents}>
+      </Box>
+      <div style={{ maxWidth: 1000 }}>
         {showCounter && <FarmingCounter onChange={handleCounterChanged} counterData={counterData} questData={questDataForCounter} />}
         <QuestSelector quests={questList()} questData={questData} questId={questId} onChange={handleQuestIdChanged}/>
         <QuestViewer questData={questData} questId={questId}/>
         <QuestMemo key={`${questId}-${updateCount}`} questId={questId} maxLength={10 * 1024} onChange={handleMemoChanged} text={loadMemo(questId)}/>
       </div>
       <DropSearchDialog open={showDropSearchDialog} itemId={300} onClose={handleDropSearchDialogResult} />
-      <div className={classes.notice}>
-        クエスト・エネミーデータなど大部分は<Link className={classes.link} color="inherit" href="https://atlasacademy.io/" target="blank">Atlas Academy</Link>を参考にさせていただいています。
+      <div style={{ marginLeft: 10 }}>
+        クエスト・エネミーデータなど大部分は<Link sx={{ color: theme.palette.info.main }} color="inherit" href="https://atlasacademy.io/" target="blank">Atlas Academy</Link>を参考にさせていただいています。
         <br />
-        クエストドロップデータは<Link className={classes.link} color="inherit" href="https://sites.google.com/view/fgo-domus-aurea" target="black">FGOアイテム効率劇場</Link>のデータを使用させていただいています。
+        クエストドロップデータは<Link sx={{ color: theme.palette.info.main }} color="inherit" href="https://sites.google.com/view/fgo-domus-aurea" target="black">FGOアイテム効率劇場</Link>のデータを使用させていただいています。
       </div>
     </>
   )

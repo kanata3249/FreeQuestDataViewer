@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 
-import { TextField } from '@material-ui/core'
+import { TextField } from '@mui/material'
 
 type Props = {
   label: string
@@ -9,10 +9,11 @@ type Props = {
   formatText(text: string): string
   unformatText(text: string): string
   onChange(text: string): void
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>
 }
 
 export const FormattedTextField: FC<Props> = (props) => {
-  const { onChange, value, defaultValue, formatText, unformatText, ...other } = props
+  const { onChange, value, defaultValue, formatText, unformatText, inputProps, ...other } = props
 
   const [ text, setText ] = useState<string>(props.formatText(value))
 
@@ -35,6 +36,7 @@ export const FormattedTextField: FC<Props> = (props) => {
   return (
     <TextField
       {...other}
+      slotProps={{ htmlInput: inputProps }}
       onFocus={handleFocus}
       onBlur={handleFocusOut}
       onChange={handleChanged}

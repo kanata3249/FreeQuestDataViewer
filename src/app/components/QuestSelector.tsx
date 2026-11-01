@@ -1,9 +1,8 @@
 import React, { FC, useState } from 'react'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { useTheme } from '@material-ui/core/styles'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
-import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 
 type Props = {
   quests: {
@@ -23,25 +22,7 @@ type Props = {
   questId: number
 }
 
-const useStyles = makeStyles((theme: Theme) => 
-  createStyles({
-    toolbar: theme.mixins.toolbar,
-    container: {
-      boxSizing: "border-box",
-      width: "100%"
-    },
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 280,
-    },
-    formControlSP: {
-      margin: theme.spacing(1),
-      minWidth: "95%",
-    },
-  }))
-
 export const QuestSelector: FC<Props> = (props) => {
-  const classes = useStyles()
   const theme = useTheme();
   const isSP = useMediaQuery(theme.breakpoints.down('xs'));
 
@@ -60,17 +41,17 @@ export const QuestSelector: FC<Props> = (props) => {
   }
 
   return (
-    <div className={classes.container}>
-      <FormControl className={isSP ? classes.formControlSP : classes.formControl}>
+    <div style={{ boxSizing: "border-box", width: "100%" }}>
+      <FormControl sx={{ m: 1, minWidth: isSP ? "95%" : 280 }}>
         <InputLabel>Chapter</InputLabel>
-        <Select value={chapterId} onChange={handleChapterChange}>
+        <Select value={chapterId.toString()} onChange={handleChapterChange}>
           {Object.keys(props.quests).map((chapterId) =>
             <MenuItem key={chapterId} value={chapterId}>{props.quests[chapterId].name}</MenuItem>)}
         </Select>
       </FormControl>
-      <FormControl className={isSP ? classes.formControlSP : classes.formControl}>
+      <FormControl sx={{ m: 1, minWidth: isSP ? "95%" : 280 }}>
         <InputLabel>Quests</InputLabel>
-        <Select value={questId} onChange={handleQuestChange}>
+        <Select value={questId.toString()} onChange={handleQuestChange}>
           {props.quests[chapterId].quests.map((quest) =>
             <MenuItem key={quest.id} value={quest.id}>{quest.name}</MenuItem>)}
         </Select>

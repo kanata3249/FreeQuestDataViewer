@@ -1,9 +1,7 @@
 import React, { FC, useState } from 'react'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { useTheme } from '@material-ui/core/styles'
+import { useTheme } from '@mui/material/styles'
 
-import { Grid, Button, TextField, FormLabel, Typography, FormControlLabel, Radio, RadioGroup } from '@material-ui/core'
-import { Popover, FormGroup, Checkbox } from '@material-ui/core'
+import { Grid, Button, TextField, FormLabel, Typography, FormControlLabel, Radio, RadioGroup, Popover, FormGroup, Checkbox } from '@mui/material'
 
 import { FormattedTextField } from './FormattedTextField'
 import { DropCounter } from './DropCounter'
@@ -95,28 +93,6 @@ const bondBonusArray = [
   "95%",
   "100%",
 ]
-
-const useStyles = makeStyles((theme: Theme) => {
-  const borderColor = theme.palette.type === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)'
-  return createStyles({
-    container: {
-      boxSizing: "border-box",
-      width: "calc(100% - 8px)",
-      padding: 6,
-      margin: 4,
-      marginTop: 8,
-      border: "1px solid",
-      borderRadius: 4,
-      borderColor: borderColor
-    },
-    title: { width: 300 },
-    total: { width: 100 },
-    bondTextField: { width: 110, textAlign: "right", paddingRight: 15 },
-    bondBonusTextField: { width: 110, textAlign: "right", paddingRight: 15 },
-    valueTextField: { width: 90, paddingRight: 5, textAlign: "right" },
-    textField: { width: 80, paddingRight: 5, textAlign: "right" }
-  })
-})
 
 const parseBondModifier = (modifiers: string) => {
   const mods = modifiers?.split(/\+/) || [ '0%' ]
@@ -256,7 +232,7 @@ const BondBonusInput: FC<BondBonusInputProp> = (props) => {
   }
   return (
     <>
-      <TextField label={props.label} value={props.value} size={props.size} onClick={handleClick} inputProps={props.inputProps}>
+      <TextField label={props.label} value={props.value} size={props.size} onClick={handleClick} slotProps={{ htmlInput: props.inputProps }}>
       </TextField>
       <Popover
         open={Boolean(anchorEl)}
@@ -268,7 +244,7 @@ const BondBonusInput: FC<BondBonusInputProp> = (props) => {
         }}
       >
         <FormGroup style={{marginLeft: 8, marginRight: 8, marginBottom: 8}}>
-          <TextField label='礼装/イベント' onChange={onChangeCeBonus} size={props.size} select value={ceBonus} SelectProps={{ native: true }}>
+          <TextField label='礼装/イベント' onChange={onChangeCeBonus} size={props.size} select value={ceBonus} slotProps={{ select: { native: true } }}>
             {bondBonusArray.map((bonus) =>
                   <option key={bonus} value={bonus}>{bonus}</option>)}
           </TextField>
@@ -282,7 +258,6 @@ const BondBonusInput: FC<BondBonusInputProp> = (props) => {
 }
 
 export const FarmingCounter: FC<Props> = (props) => {
-  const classes = useStyles()
   const theme = useTheme()
   const counterData = parseCounterData(props.counterData)
   const [ bondPerQuestKey, setBondPerQuestKey ] = useState(0)
@@ -368,56 +343,56 @@ export const FarmingCounter: FC<Props> = (props) => {
     props.onChange(JSON.stringify(emptyCountData))
   }
   return (
-    <Grid container direction="column" className={classes.container} spacing={2}>
-      <Grid item>
+    <Grid container sx={{ flexDirection: "column", boxSizing: "border-box", width: "calc(100% - 8px)", p: 0.75, m: 0.5, mt: 1, border: "1px solid", borderRadius: 1, borderColor: theme.palette.mode === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)' }} spacing={2}>
+      <Grid>
         <Grid container spacing={1}>
-          <Grid item>
+          <Grid>
             <TextField label="クエスト名" onChange={handleTitleChanged} value={counterData.title}
-              className={classes.title} inputProps={{style: { textAlign: "center" }}}/>
+              sx={{ width: 300 }} slotProps={{ htmlInput: {style: { textAlign: "center" }}}}/>
           </Grid>
-          <Grid item>
+          <Grid>
             <TextField label="トータル" onChange={handleCountChanged} type="number" value={counterData.count}
-              className={classes.total} inputProps={{min: 0, style: { textAlign: "right" } }}
+              sx={{ width: 100 }} slotProps={{ htmlInput: {min: 0, style: { textAlign: "right" } }}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
-          <Grid item>
+          <Grid>
             <Button onClick={applyQuestData} variant="outlined" >クエスト反映</Button>
           </Grid>
-          <Grid item>
+          <Grid>
             <Button onClick={resetCounter} variant="outlined" >リセット</Button>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item>
-        <Grid container alignItems="baseline" spacing={1}>
-          <Grid item>
+      <Grid>
+        <Grid container sx={{ alignItems: "baseline" }} spacing={1}>
+          <Grid>
             <BondWithBonusInput label="1周あたり" onChange={handleBondPerQuestChanged} key={bondPerQuestKey}
-              value={counterData.values.perQuest} modifier={counterData.values.modifier} size="small" inputProps={{className: classes.bondTextField}} />
+              value={counterData.values.perQuest} modifier={counterData.values.modifier} size="small" inputProps={{style: { width: 110, textAlign: "right", paddingRight: 15 }}} />
           </Grid>
-          <Grid item>
-            <BondBonusInput label="ボーナス" onChange={handleBondBonusChanged} value={counterData.values.modifier} size="small" inputProps={{className: classes.bondBonusTextField}} />
+          <Grid>
+            <BondBonusInput label="ボーナス" onChange={handleBondBonusChanged} value={counterData.values.modifier} size="small" inputProps={{style: { width: 110, textAlign: "right", paddingRight: 15 }}} />
           </Grid>
-          <Grid item>
+          <Grid>
             <TextField label="開始値" onChange={handleBondStartChanged} value={counterData.values.start}
-              size="small" type="number" inputProps={{className: classes.valueTextField}}
+              size="small" type="number" slotProps={{ htmlInput: {style: { width: 90, paddingRight: 5, textAlign: "right" }}}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
-          <Grid item>
+          <Grid>
             <TextField label="現在値" onChange={handleBondCurrentChanged} value={counterData.values.current}
-              size="small" type="number" inputProps={{className: classes.valueTextField}}
+              size="small" type="number" slotProps={{ htmlInput: {style: { width: 90, paddingRight: 5, textAlign: "right" }}}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
             </Grid>
-          <Grid item>
+          <Grid>
             <TextField label="換算周回数" onChange={handleBondCountChanged} value={calculateCount(counterData)}
-              error={!isBondCountValid()} size="small" type="number" inputProps={{min: 0, className: classes.textField}}
+              error={!isBondCountValid()} size="small" type="number" slotProps={{ htmlInput: {min: 0, style: { width: 80, paddingRight: 5, textAlign: "right" }}}}
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => {e.target.select()}} />
           </Grid>
-          <Grid item>
+          <Grid>
             <Button onClick={applyCountByBond} disabled={!isApplyOK()} variant="outlined" >トータル周<br/>回数へ反映</Button>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item>
+      <Grid>
         <FormLabel id="count-mode-group-label">カウント方法</FormLabel>
         <RadioGroup name="mode"
           row aria-labelledby="count-mode-group-label"
@@ -428,11 +403,11 @@ export const FarmingCounter: FC<Props> = (props) => {
           <FormControlLabel value="mod" control={<Radio color="default" size="small" />} label="QP下2桁" />
         </RadioGroup>
       </Grid>
-      <Grid item>
+      <Grid>
         <FormLabel><Typography variant="caption">ドロップ</Typography></FormLabel>
         <Grid container spacing={0}>
           {counterData.dropCounts.map((dropCount: DropCount, idx: number) => (
-            <Grid item key={`${idx}-${counterData.count}`}>
+            <Grid key={`${idx}-${counterData.count}`}>
               <DropCounter onChange={handleDropCountChanged} onChangeArg={idx} noTextLabel={idx != 0}
                 dropCount={dropCount} divider={counterData.count + calculateCount(counterData)} key={`${dropCounterKey}-${idx}-${counterData.count}`}/>
             </Grid>

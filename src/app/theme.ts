@@ -1,15 +1,15 @@
-import { createMuiTheme } from "@material-ui/core/styles"
-import * as colors from '@material-ui/core/colors'
+import { createTheme } from "@mui/material/styles"
+import * as colors from '@mui/material/colors'
 
 const isDarkMode = () => matchMedia('(prefers-color-scheme: dark)').matches
 
 export const appTheme = () => {
-  const theme = createMuiTheme({
+  const theme = createTheme({
     palette: {
       primary: {
         main: colors.blue[800],
       },
-      type: isDarkMode() ? "dark" : "light",
+      mode: isDarkMode() ? "dark" : "light",
     },
   })
 

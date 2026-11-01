@@ -1,18 +1,17 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import { ThemeProvider } from '@material-ui/core/styles'
-import CssBaseline from "@material-ui/core/CssBaseline"
+import { createRoot } from 'react-dom/client'
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from "@mui/material/CssBaseline"
 
 import { appTheme } from './app/theme'
 import { TopPage } from './app/pages/topPage'
 
 const theme = appTheme()
 
-ReactDOM.render(
+createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={theme}>
     <CssBaseline />
     <TopPage>
     </TopPage>
-  </ThemeProvider>,
-  document.getElementById('root')
+  </ThemeProvider>
 )

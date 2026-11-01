@@ -1,10 +1,8 @@
 import React, { FC, useState } from 'react'
-import { makeStyles, createStyles, Theme, useTheme } from '@material-ui/core/styles'
 
-import { Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
-import { List, ListItem, ListItemText, Checkbox, FormControlLabel, Select, MenuItem, ListSubheader } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import { Grid } from '@material-ui/core'
+import { Box, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material'
+import { List, ListItem, ListItemText, Checkbox, FormControlLabel, Select, MenuItem, ListSubheader, Grid } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 
 import { dropItems, questListByDropItem, QuestDropRates, DropItem } from '../../fgo/questInfo'
 
@@ -13,42 +11,6 @@ type Prop = {
   itemId: number,
   onClose(selected: boolean, questId: number): void
 }
-
-const useStyles = makeStyles((theme: Theme) => 
-  createStyles({
-    dialog: {
-    },
-    closeButton: {
-      position: 'absolute',
-      right: theme.spacing(1),
-      top: theme.spacing(1),
-      color: theme.palette.grey[500],
-    },
-    action2: {
-      paddingTop: 0,
-      paddingBottom: 0,
-    },
-    contents: {
-      paddingLeft: 6,
-      paddingRight: 6
-    },
-    questListItem: {
-      paddingLeft: 2,
-      paddingRight: 2,
-      fontSize: "smalller"
-    },
-    chapter: {
-      margin: 0,
-      color: theme.palette.text.secondary,
-      fontSize: "0.83em"
-    },
-    subDrop: {
-      margin: 0,
-      color: theme.palette.text.secondary,
-      textAlign: "right"
-    }
-  })
-)
 
 const dropItemList = dropItems()
 
@@ -64,9 +26,6 @@ const totalRate = (dropRates: { [id: number]: number }): number => {
 }
 
 export const DropSearchDialog: FC<Prop> = (props) => {
-  const classes = useStyles()
-  const theme = useTheme();
-
   const [ useTotalDropRate, setUseTotalDropRate ] = useState(false)
   const [ dropItem, setDropItem ] = useState(dropItemList.find((a) => a.id == props.itemId))
   const questList = questListByDropItem(dropItem?.id).sort((a, b) => {
@@ -115,18 +74,18 @@ export const DropSearchDialog: FC<Prop> = (props) => {
 
   return (
     <div>
-      <Dialog className={classes.dialog} open={props.open}
+      <Dialog open={props.open}
         fullWidth maxWidth="sm"
         onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">
           ドロップ検索
-          <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
+          <IconButton aria-label="close" sx={{ position: 'absolute', right: 1, top: 1, color: 'grey.500' }} onClick={handleClose}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogActions>
           <Select
-            value={dropItem.id}
+            value={dropItem.id.toString()}
             onChange={handleSearchItemChanged}
             native
             style={{width: "100%"}}
@@ -151,15 +110,15 @@ export const DropSearchDialog: FC<Prop> = (props) => {
               }, [])}
           </Select>
         </DialogActions>
-        <DialogActions className={classes.action2} >
+        <DialogActions sx={{ py: 0 }}>
           <FormControlLabel control={<Checkbox size="small" color="default" checked={useTotalDropRate} onChange={(e) => setUseTotalDropRate(e.target.checked)} />} label="ドロップ率合算" />
         </DialogActions>
-        <DialogContent className={classes.contents} >
+        <DialogContent sx={{ px: 0.75 }}>
           <List dense component="nav" aria-label="main mailbox folders" >
             {questList.map((quest, questIndex) => (
-              <ListItem key={questIndex} onClick={(e) => handleClickQuest(questIndex)} className={classes.questListItem} >
-                <Grid container direction="column" >
-                  <Grid item>
+              <ListItem key={questIndex} onClick={(e) => handleClickQuest(questIndex)} sx={{ px: 0.25, fontSize: "smalller" }}>
+                <Grid container sx={{ flexDirection: "column" }}>
+                  <Grid>
                     <Grid container>
                       <ListItemText style={{flexGrow: 1}} primary={quest.name}/>
                       <ListItemText style={{textAlign: "right"}}
@@ -168,14 +127,14 @@ export const DropSearchDialog: FC<Prop> = (props) => {
                     </Grid>
                   </Grid>
                   <Grid container >
-                    <Grid item >
-                      <span className={classes.chapter} >{quest.chapter.split(" ").slice(-1).pop()}</span>
+                    <Grid>
+                      <Box component="span" sx={{ m: 0, color: 'text.secondary', fontSize: "0.83em" }} >{quest.chapter.split(" ").slice(-1).pop()}</Box>
                     </Grid>
-                    <Grid item style={{flexGrow: 1}} >
+                    <Grid style={{flexGrow: 1}} >
                       {subDropRates(quest, dropItem.id, useTotalDropRate).map(({ name, id, dropRate }) => (
-                        <p key={`${questIndex}-${id}`} className={classes.subDrop} >
+                        <Box component="p" key={`${questIndex}-${id}`} sx={{ m: 0, color: 'text.secondary', textAlign: "right" }} >
                           {name} {dropRate}%
-                        </p>
+                        </Box>
                       ))}
                     </Grid>
                   </Grid>
